@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_navigation"  app:startDestination="@+id/loginFragment">  <fragment
+    android:id="@+id/loginFragment"
+    android:name="com.example.onlineteach.ui.auth.LoginFragment"
+    android:label="用户登录"
+    tools:layout="@layout/fragment_login">
+
+    <action
+        android:id="@+id/action_loginFragment_to_registrationFragment"
+        app:destination="@id/registrationFragment" />
+</fragment>
+
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.example.onlineteach.ui.auth.RegistrationFragment"
+        android:label="用户注册"
+        tools:layout="@layout/fragment_registration">
+
+        <action
+            android:id="@+id/action_registrationFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"/>
+
+    </fragment>
+
+</navigation>
