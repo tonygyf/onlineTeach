@@ -29,29 +29,30 @@ public class RegistrationFragment extends Fragment {
         binding = FragmentRegistrationBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 获取 ViewModel (如果RegistrationViewModel存在且需要)
-        // mViewModel = new ViewModelProvider(this).get(RegistrationViewModel.class);
-        // TODO: Use the ViewModel for registration logic and observe results
+        // 获取 ViewModel
+        mViewModel = new ViewModelProvider(this).get(RegistrationViewModel.class);
+
+        // 观察注册结果
+        mViewModel.getRegistrationResult().observe(getViewLifecycleOwner(), result -> {
+            if (result.isSuccess()) {
+                Toast.makeText(getContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                // 注册成功后导航回登录页面
+                NavController navController = Navigation.findNavController(binding.getRoot());
+                navController.navigate(R.id.action_registrationFragment_to_loginFragment);
+            } else {
+                Toast.makeText(getContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // 设置注册按钮的点击事件监听器
         binding.buttonRegister.setOnClickListener(v -> {
             String username = binding.editTextUsername.getText().toString().trim();
+            String studentId = binding.editTextStudentId.getText().toString().trim();
             String password = binding.editTextPassword.getText().toString().trim();
 
-            // TODO: 在这里实现你的注册逻辑验证和保存
-            boolean registrationSuccess = true; // 暂时模拟注册成功
-
-            if (registrationSuccess) {
-                Toast.makeText(getContext(), "注册成功！请登录", Toast.LENGTH_SHORT).show();
-                // 注册成功后导航回登录页面 (在当前的认证导航图内)
-                NavController navController = Navigation.findNavController(v);
-                // 使用 auth_navigation.xml 中定义的从 registrationFragment 到 loginFragment 的 Action ID
-                navController.navigate(R.id.action_registrationFragment_to_loginFragment);
-            } else {
-                Toast.makeText(getContext(), "注册失败", Toast.LENGTH_SHORT).show();
-                // 注册失败，可以在输入框下方显示错误信息等
-            }
-        });
+            // 调用ViewModel处理注册逻辑
+            mViewModel.registerUser(username, studentId, password);
+        }); // <-- Added missing parenthesis here
 
         // 设置“已有账号？去登录” TextView 的点击事件监听器
         binding.textViewLoginLink.setOnClickListener(v -> {
