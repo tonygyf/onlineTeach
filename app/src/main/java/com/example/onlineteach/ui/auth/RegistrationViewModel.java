@@ -36,8 +36,9 @@ public class RegistrationViewModel extends AndroidViewModel {
             _registrationResult.setValue(new RegistrationResult(false, "用户名、学号或密码不能为空"));
             return;
         }
+        User user =new User(username, studentId, password);
 
-        userRepository.registerUser(username, studentId, password, new UserRepository.RegistrationCallback() {
+        userRepository.insertUser(user, new UserRepository.RegistrationCallback() {
             @Override
             public void onSuccess(User user) {
                 _registrationResult.postValue(new RegistrationResult(true, "注册成功！"));

@@ -31,11 +31,38 @@ public class UserRepository {
 
     /**
      * 在后台线程插入用户
+     * @param user 要插入的用户对象
+     * @param callback 注册结果回调
      */
-    public void insertUser(User user) {
+    public void insertUser(User user, RegistrationCallback callback) {
         executorService.execute(() -> {
-            userDao.insertUser(user);
-            Log.d(TAG, "User inserted: " + user.getUserName());
+            try {
+                // 检查用户名是否已存在
+                User existingUserByName = userDao.getUserByUserName(user.getUserName());
+                if (existingUserByName != null) {
+                    callback.onError("用户名已存在");
+                    return;
+                }
+                
+                // 检查学号是否已存在
+                User existingUserById = userDao.findUserByStudentId(user.getStudentId());
+                if (existingUserById != null) {
+                    callback.onError("该学号已被注册");
+                    return;
+                }
+
+                // 插入新用户
+                long result = userDao.insertUser(user);
+                if (result > 0) {
+                    Log.d(TAG, "User inserted: " + user.getUserName());
+                    callback.onSuccess(user);
+                } else {
+                    callback.onError("注册失败，请稍后重试");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error inserting user: " + e.getMessage());
+                callback.onError("注册过程中发生错误");
+            }
         });
     }
 
@@ -139,4 +166,10 @@ public class UserRepository {
 
     // TODO: 在Repository销毁时关闭执行器 (虽然Repository没有明确的生命周期，
     // 但如果和ViewModel的生命周期关联，可以在ViewModel的onCleared中管理)
+
+    // 回调接口，用于通知注册结果
+    public interface RegistrationCallback {
+        void onSuccess(User user);
+        void onError(String errorMessage);
+    }
 }
