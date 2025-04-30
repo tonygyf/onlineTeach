@@ -4,4 +4,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_personal">个人信息</string>
+    <string name="menu_item_icon_description">菜单项图标</string>
+    <string name="navigate_arrow_description">导航箭头</string>
 </resources>
