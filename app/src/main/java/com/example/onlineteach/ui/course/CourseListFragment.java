@@ -37,7 +37,10 @@ public class CourseListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(CourseListViewModel.class);
+        // 使用AndroidViewModel的Factory来创建ViewModel
+        mViewModel = new ViewModelProvider(this, 
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication()))
+            .get(CourseListViewModel.class);
 
         // 初始化适配器
         CourseListAdapter adapter = new CourseListAdapter();

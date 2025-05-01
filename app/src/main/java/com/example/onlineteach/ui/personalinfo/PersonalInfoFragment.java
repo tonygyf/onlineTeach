@@ -16,13 +16,19 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.onlineteach.R;
+import com.example.onlineteach.utils.ToastUtils;
 import com.example.onlineteach.databinding.FragmentPersonalInfoBinding; // Data Binding 生成的类
+import com.example.onlineteach.ui.home.MenuAdapter;
+import com.example.onlineteach.ui.home.MenuItem;
 
 public class PersonalInfoFragment extends Fragment {
 
@@ -71,6 +77,46 @@ public class PersonalInfoFragment extends Fragment {
         
         // 加载保存的头像
         mViewModel.loadAvatarFromPrefs(requireContext());
+        
+        // 设置菜单列表
+        setupMenuRecyclerView();
+    }
+    
+    /**
+     * 设置菜单RecyclerView
+     */
+    private void setupMenuRecyclerView() {
+        RecyclerView recyclerView = binding.recyclerViewMenu;
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        
+        // 观察菜单项数据变化
+        mViewModel.getMenuItems().observe(getViewLifecycleOwner(), menuItems -> {
+            MenuAdapter adapter = new MenuAdapter(menuItems, position -> {
+                // 处理菜单项点击事件
+                handleMenuItemClick(position);
+            });
+            recyclerView.setAdapter(adapter);
+        });
+    }
+    
+    /**
+     * 处理菜单项点击事件
+     * @param position 点击的菜单项位置
+     */
+    private void handleMenuItemClick(int position) {
+        // 根据点击的位置执行相应的操作
+        switch (position) {
+            case 0: // 修改个人信息
+                ToastUtils.showShortToast(requireContext(), "修改个人信息功能待实现");
+                break;
+            case 1: // 浏览记录
+                ToastUtils.showShortToast(requireContext(), "浏览记录功能待实现");
+                break;
+            case 2: // 退出账户
+                mViewModel.logout();
+                ToastUtils.showShortToast(requireContext(), "已退出登录");
+                break;
+        }
     }
     
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -108,12 +154,12 @@ public class PersonalInfoFragment extends Fragment {
             Uri savedUri = mViewModel.saveAvatarToInternalStorage(requireContext(), imageUri);
             if (savedUri != null) {
                 mViewModel.setAvatarUri(savedUri);
-                Toast.makeText(getContext(), "头像已保存", Toast.LENGTH_SHORT).show();
+                ToastUtils.showShortToast(getContext(), "头像已保存");
             } else {
-                Toast.makeText(getContext(), "头像保存失败", Toast.LENGTH_SHORT).show();
+                ToastUtils.showShortToast(getContext(), "头像保存失败");
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            Toast.makeText(getContext(), "取消选择头像", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShortToast(getContext(), "取消选择头像");
         }
     }
     
@@ -126,7 +172,7 @@ public class PersonalInfoFragment extends Fragment {
                 openGallery();
             } else {
                 // 权限被拒绝
-                Toast.makeText(getContext(), "需要存储权限才能选择头像", Toast.LENGTH_SHORT).show();
+                ToastUtils.showShortToast(getContext(), "需要存储权限才能选择头像");
             }
             return;
         }

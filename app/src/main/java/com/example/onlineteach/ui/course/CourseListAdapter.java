@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import com.example.onlineteach.utils.ToastUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlineteach.R;
@@ -67,9 +68,8 @@ public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.Co
             creditsView.setText(String.format("学分: %.1f", course.getCredits()));
             
             enrollButton.setOnClickListener(v -> {
-                Toast.makeText(v.getContext(), 
-                    "报名课程: " + course.getTitle(), 
-                    Toast.LENGTH_SHORT).show();
+                ToastUtils.showShortToast(v.getContext(), 
+                    "报名课程: " + course.getTitle());
             });
         }
     }

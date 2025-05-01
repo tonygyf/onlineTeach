@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment implements MenuAdapter.OnItemClickLis
     public void onItemClick(int position) {
         if (position == 0) { // 课程菜单项
             Navigation.findNavController(requireView())
-                    .navigate(R.id.action_homeFragment_to_courseListFragment);
+                    .navigate(R.id.action_navigation_home_to_navigation_course_list);
         }
         // 其他菜单项的点击处理可以在这里添加
     }

@@ -19,6 +19,7 @@ import android.widget.Toast; // 导入 Toast
 import com.example.onlineteach.MainActivity; // 替换为你的主 Activity 类路径
 import com.example.onlineteach.R; // 导入你的 R 文件
 import com.example.onlineteach.databinding.FragmentLoginBinding; // 导入 View Binding 生成的类
+import com.example.onlineteach.utils.ToastUtils;
 
 
 public class LoginFragment extends Fragment {
@@ -41,7 +42,7 @@ public class LoginFragment extends Fragment {
             if (result != null) {
                 if (result.isSuccess()) {
                     // 登录成功，显示消息并跳转到主 Activity
-                    Toast.makeText(getContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                    ToastUtils.showShortToast(getContext(), result.getMessage());
                     Intent intent = new Intent(requireActivity(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -49,7 +50,7 @@ public class LoginFragment extends Fragment {
 
                 } else {
                     // 登录失败，显示错误信息
-                    Toast.makeText(getContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                    ToastUtils.showShortToast(getContext(), result.getMessage());
                     // TODO: 可以在输入框下方显示具体的错误信息
                 }
             }

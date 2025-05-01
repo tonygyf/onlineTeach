@@ -11,13 +11,17 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.onlineteach.R;
 import com.example.onlineteach.data.model.User; // 导入 User
 import com.example.onlineteach.data.repository.UserRepository; // 导入 UserRepository
+import com.example.onlineteach.ui.home.MenuItem; // 导入 MenuItem
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 // 移除 ExecutorService 和 UserDao 导入，因为它们现在在 UserRepository 中管理
 
 public class PersonalInfoViewModel extends AndroidViewModel {
@@ -30,6 +34,7 @@ public class PersonalInfoViewModel extends AndroidViewModel {
     private MutableLiveData<String> mUserName = new MutableLiveData<>();
     private MutableLiveData<String> mStudentId = new MutableLiveData<>();
     private MutableLiveData<Uri> mAvatarUri = new MutableLiveData<>();
+    private MutableLiveData<List<MenuItem>> menuItems = new MutableLiveData<>();
 
     public PersonalInfoViewModel(@NonNull Application application) {
         super(application);
@@ -40,6 +45,8 @@ public class PersonalInfoViewModel extends AndroidViewModel {
         loadLoggedInUser();
         // 加载保存的头像
         loadAvatarFromPrefs(application.getApplicationContext());
+        // 初始化菜单项
+        initMenuItems();
     }
 
     public LiveData<String> getUserName() {
@@ -56,6 +63,33 @@ public class PersonalInfoViewModel extends AndroidViewModel {
 
     public void setAvatarUri(Uri uri) {
         mAvatarUri.setValue(uri);
+    }
+    
+    public LiveData<List<MenuItem>> getMenuItems() {
+        return menuItems;
+    }
+    
+    /**
+     * 初始化个人信息页面的菜单项
+     */
+    private void initMenuItems() {
+        List<MenuItem> items = new ArrayList<>();
+        items.add(new MenuItem(R.drawable.ic_edit, "修改个人信息"));
+        items.add(new MenuItem(R.drawable.ic_history, "浏览记录"));
+        items.add(new MenuItem(R.drawable.ic_logout, "退出账户"));
+        menuItems.setValue(items);
+    }
+    
+    /**
+     * 处理退出账户操作
+     */
+    public void logout() {
+        userRepository.logoutUser();
+        // 更新UI状态
+        mUserName.postValue("请登录");
+        mStudentId.postValue("");
+        // 清除头像
+        mAvatarUri.setValue(null);
     }
 
     /**

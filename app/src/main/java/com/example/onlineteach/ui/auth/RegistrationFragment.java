@@ -16,6 +16,7 @@ import android.widget.Toast; // 导入 Toast
 
 import com.example.onlineteach.R;
 import com.example.onlineteach.databinding.FragmentRegistrationBinding; // 导入 View Binding 生成的类
+import com.example.onlineteach.utils.ToastUtils;
 
 public class RegistrationFragment extends Fragment {
 
@@ -35,12 +36,12 @@ public class RegistrationFragment extends Fragment {
         // 观察注册结果
         mViewModel.getRegistrationResult().observe(getViewLifecycleOwner(), result -> {
             if (result.isSuccess()) {
-                Toast.makeText(getContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastUtils.showShortToast(getContext(), result.getMessage());
                 // 注册成功后导航回登录页面
                 NavController navController = Navigation.findNavController(binding.getRoot());
                 navController.navigate(R.id.action_registrationFragment_to_loginFragment);
             } else {
-                Toast.makeText(getContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastUtils.showShortToast(getContext(), result.getMessage());
             }
         });
 

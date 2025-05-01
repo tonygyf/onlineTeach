@@ -11,7 +11,7 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_courseListFragment"
+            android:id="@+id/action_navigation_home_to_navigation_course_list"
             app:destination="@id/navigation_course_list" />
     </fragment>
 
