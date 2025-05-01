@@ -8,15 +8,13 @@
 
     <ImageView
         android:id="@+id/splashLogo"
-        android:layout_width="470dp"
-        android:layout_height="579dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:contentDescription="启动页Logo"
-        android:scaleType="fitCenter"
-        android:src="@drawable/splash_logo"
+        android:scaleType="centerCrop"
+        android:src="@drawable/splash_logo4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        /> </androidx.constraintlayout.widget.ConstraintLayout>
