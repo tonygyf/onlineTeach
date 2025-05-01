@@ -71,19 +71,19 @@ public abstract class AppDatabase extends RoomDatabase {
                 course1.setTitle("大学教学的语言技能");
                 course1.setCredits(1.0f);
                 course1.setTeacher("教发老师");
-                // course1.setImageUrl("your_image_url_here"); // 如果需要图片URL
+                course1.setImageUrl("@drawable/courselist");
 
                 Course course2 = new Course();
                 course2.setTitle("教学准备五件事");
                 course2.setCredits(1.0f);
                 course2.setTeacher("教发老师");
-                // course2.setImageUrl("your_image_url_here"); // 如果需要图片URL
+                course2.setImageUrl("@drawable/courselist");
 
                 Course course3 = new Course();
                 course3.setTitle("在线教学设计与实施");
                 course3.setCredits(1.5f);
                 course3.setTeacher("技术支持中心");
-                // course3.setImageUrl("your_image_url_here"); // 如果需要图片URL
+                course3.setImageUrl("@drawable/courselist");
 
                 courseList.add(course1);
                 courseList.add(course2);
