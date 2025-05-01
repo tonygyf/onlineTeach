@@ -13,7 +13,11 @@
         android:id="@+id/navigation_home"
         android:name="com.example.onlineteach.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_course_list"
+            app:destination="@id/navigation_course_list" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -32,5 +36,10 @@
         android:name="com.example.onlineteach.ui.personalinfo.PersonalInfoFragment"
         android:label="@string/title_personal"
         tools:layout="@layout/fragment_personal_info" />
+    <fragment
+        android:id="@+id/navigation_course_list"
+        android:name="com.example.onlineteach.ui.course.CourseListFragment"
+        android:label="课程列表"
+        tools:layout="@layout/fragment_course_list" />
 
 </navigation>
