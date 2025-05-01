@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    这个是为了静态隐藏appbar的-->
+    <style name="Theme.YourAppName" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    </style>
+
+    <style name="Theme.YourAppName.NoActionBar"> // 或者继承自 Theme.AppCompat.Light.NoActionBar
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.AppCompat.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    </style>
+</resources>
