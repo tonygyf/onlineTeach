@@ -35,6 +35,7 @@ public class PersonalInfoViewModel extends AndroidViewModel {
     private MutableLiveData<String> mStudentId = new MutableLiveData<>();
     private MutableLiveData<Uri> mAvatarUri = new MutableLiveData<>();
     private MutableLiveData<List<MenuItem>> menuItems = new MutableLiveData<>();
+    private MutableLiveData<Boolean> passwordChangeResult = new MutableLiveData<>();
 
     public PersonalInfoViewModel(@NonNull Application application) {
         super(application);
@@ -68,6 +69,41 @@ public class PersonalInfoViewModel extends AndroidViewModel {
     public LiveData<List<MenuItem>> getMenuItems() {
         return menuItems;
     }
+
+    /**
+     * 更新用户个人信息
+     * @param newUsername 新的用户名
+     * @param newStudentId 新的学号
+     */
+    public void updateUserInfo(String newUsername, String newStudentId) {
+        if (newUsername.isEmpty() || newStudentId.isEmpty()) {
+            return;
+        }
+
+        // 获取当前登录用户ID
+        int userId = userRepository.getLoggedInUserId();
+        if (userId == -1) {
+            return;
+        }
+
+        // 创建更新后的用户对象
+        User updatedUser = new User(userId, newUsername, newStudentId);
+
+        // 调用Repository更新用户信息
+        userRepository.updateUser(updatedUser, new UserRepository.UpdateCallback() {
+            @Override
+            public void onSuccess() {
+                // 更新成功后刷新UI显示
+                mUserName.postValue(newUsername);
+                mStudentId.postValue(newStudentId);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "更新用户信息失败: " + error);
+            }
+        });
+    }
     
     /**
      * 初始化个人信息页面的菜单项
@@ -75,6 +111,7 @@ public class PersonalInfoViewModel extends AndroidViewModel {
     private void initMenuItems() {
         List<MenuItem> items = new ArrayList<>();
         items.add(new MenuItem(R.drawable.ic_edit, "修改个人信息"));
+        items.add(new MenuItem(R.drawable.ic_key, "修改密码"));
         items.add(new MenuItem(R.drawable.ic_history, "浏览记录"));
         items.add(new MenuItem(R.drawable.ic_logout, "退出账户"));
         menuItems.setValue(items);
@@ -197,6 +234,43 @@ public class PersonalInfoViewModel extends AndroidViewModel {
         return null;
     }
 
+
+    /**
+     * 修改用户密码
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     */
+    public void changePassword(String oldPassword, String newPassword) {
+        if (oldPassword.isEmpty() || newPassword.isEmpty()) {
+            passwordChangeResult.setValue(false);
+            return;
+        }
+
+        // 获取当前登录用户ID
+        int userId = userRepository.getLoggedInUserId();
+        if (userId == -1) {
+            passwordChangeResult.setValue(false);
+            return;
+        }
+
+        // 调用Repository更新密码
+        userRepository.changePassword(userId, oldPassword, newPassword, new UserRepository.UpdateCallback() {
+            @Override
+            public void onSuccess() {
+                passwordChangeResult.postValue(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "修改密码失败: " + error);
+                passwordChangeResult.postValue(false);
+            }
+        });
+    }
+
+    public LiveData<Boolean> getPasswordChangeResult() {
+        return passwordChangeResult;
+    }
 
     @Override
     protected void onCleared() {

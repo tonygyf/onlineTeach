@@ -25,11 +25,19 @@ public class User {
     }
 
     // 使用 @Ignore 标记这个构造函数，告诉 Room 在读取数据库时不使用它
-    @Ignore // <--- 在这里添加 @Ignore 注解
+    @Ignore
     public User(String userName, String studentId, String password) {
         this.userName = userName;
         this.studentId = studentId;
         this.password = password;
+    }
+
+    // 添加带uid的构造函数
+    @Ignore
+    public User(int uid, String userName, String studentId) {
+        this.uid = uid;
+        this.userName = userName;
+        this.studentId = studentId;
     }
 
     // 提供 getter 方法

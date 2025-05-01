@@ -22,8 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.textfield.TextInputEditText;
 import com.example.onlineteach.R;
 import com.example.onlineteach.utils.ToastUtils;
 import com.example.onlineteach.databinding.FragmentPersonalInfoBinding; // Data Binding 生成的类
@@ -107,16 +110,63 @@ public class PersonalInfoFragment extends Fragment {
         // 根据点击的位置执行相应的操作
         switch (position) {
             case 0: // 修改个人信息
-                ToastUtils.showShortToast(requireContext(), "修改个人信息功能待实现");
+                showEditPersonalInfoDialog();
                 break;
-            case 1: // 浏览记录
+            case 1: // 修改密码
+                showChangePasswordDialog();
+                break;
+            case 2: // 浏览记录
                 ToastUtils.showShortToast(requireContext(), "浏览记录功能待实现");
                 break;
-            case 2: // 退出账户
+            case 3: // 退出账户
                 mViewModel.logout();
                 ToastUtils.showShortToast(requireContext(), "已退出登录");
                 break;
         }
+    }
+
+    /**
+     * 显示编辑个人信息对话框
+     */
+    private void showEditPersonalInfoDialog() {
+        // 创建对话框
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_personal_info, null);
+        builder.setView(dialogView);
+
+        // 获取对话框中的控件
+        TextInputEditText editTextUsername = dialogView.findViewById(R.id.editTextUsername);
+        TextInputEditText editTextStudentId = dialogView.findViewById(R.id.editTextStudentId);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        Button btnSave = dialogView.findViewById(R.id.btnSave);
+
+        // 设置当前用户信息
+        editTextUsername.setText(mViewModel.getUserName().getValue());
+        editTextStudentId.setText(mViewModel.getStudentId().getValue());
+
+        // 创建对话框
+        AlertDialog dialog = builder.create();
+
+        // 设置取消按钮点击事件
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        // 设置保存按钮点击事件
+        btnSave.setOnClickListener(v -> {
+            String newUsername = editTextUsername.getText().toString().trim();
+            String newStudentId = editTextStudentId.getText().toString().trim();
+
+            if (newUsername.isEmpty() || newStudentId.isEmpty()) {
+                ToastUtils.showShortToast(requireContext(), "用户名和学号不能为空");
+                return;
+            }
+
+            // 调用ViewModel更新用户信息
+            mViewModel.updateUserInfo(newUsername, newStudentId);
+            dialog.dismiss();
+            ToastUtils.showShortToast(requireContext(), "个人信息已更新");
+        });
+
+        dialog.show();
     }
     
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -177,6 +227,63 @@ public class PersonalInfoFragment extends Fragment {
             return;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
+     * 显示修改密码对话框
+     */
+    private void showChangePasswordDialog() {
+        // 创建对话框
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
+        builder.setView(dialogView);
+
+        // 获取对话框中的控件
+        TextInputEditText editTextOldPassword = dialogView.findViewById(R.id.editTextOldPassword);
+        TextInputEditText editTextNewPassword = dialogView.findViewById(R.id.editTextNewPassword);
+        TextInputEditText editTextConfirmPassword = dialogView.findViewById(R.id.editTextConfirmPassword);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        Button btnSave = dialogView.findViewById(R.id.btnSave);
+
+        // 创建对话框
+        AlertDialog dialog = builder.create();
+
+        // 设置取消按钮点击事件
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        // 设置保存按钮点击事件
+        btnSave.setOnClickListener(v -> {
+            String oldPassword = editTextOldPassword.getText().toString().trim();
+            String newPassword = editTextNewPassword.getText().toString().trim();
+            String confirmPassword = editTextConfirmPassword.getText().toString().trim();
+
+            if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                ToastUtils.showShortToast(requireContext(), "请填写所有密码字段");
+                return;
+            }
+
+            if (!newPassword.equals(confirmPassword)) {
+                ToastUtils.showShortToast(requireContext(), "新密码与确认密码不一致");
+                return;
+            }
+
+            // 调用ViewModel更新密码
+            mViewModel.changePassword(oldPassword, newPassword);
+            dialog.dismiss();
+        });
+
+        // 观察密码修改结果
+        mViewModel.getPasswordChangeResult().observe(getViewLifecycleOwner(), success -> {
+            if (success != null) {
+                if (success) {
+                    ToastUtils.showShortToast(requireContext(), "密码修改成功");
+                } else {
+                    ToastUtils.showShortToast(requireContext(), "密码修改失败，请检查旧密码是否正确");
+                }
+            }
+        });
+
+        dialog.show();
     }
 
     @Override
