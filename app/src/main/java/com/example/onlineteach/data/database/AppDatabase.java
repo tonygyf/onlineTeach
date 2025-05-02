@@ -100,7 +100,10 @@ public abstract class AppDatabase extends RoomDatabase {
 
                     // ✅ 使用 appContext 替代 context
                     InputStream inputStream = appContext.getAssets().open(fileName);
-                    File privateDir = appContext.getFilesDir();
+                    File privateDir = new File(appContext.getFilesDir(), "books");
+                    if (!privateDir.exists()) {
+                        privateDir.mkdirs();
+                    }
                     File outputFile = new File(privateDir, fileName);
 
                     FileOutputStream outputStream = new FileOutputStream(outputFile);
