@@ -4,8 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.bookshelf.BookshelfFragment">
-
+    tools:context=".ui.bookshelf.BookshelfFragment"
+    android:paddingBottom="80dp"
+    android:fitsSystemWindows="true">
+<!--Fragment 的根布局设置底部 padding，避开 BottomNavigationView 的高度。-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewBooks"
         android:layout_width="match_parent"
