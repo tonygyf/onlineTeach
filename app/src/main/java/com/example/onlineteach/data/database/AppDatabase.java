@@ -7,21 +7,25 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.onlineteach.data.dao.BookDao;
 import com.example.onlineteach.data.dao.UserDao;
+import com.example.onlineteach.data.model.Book;
 import com.example.onlineteach.data.model.User;
 import com.example.onlineteach.data.dao.CourseDao;
 import com.example.onlineteach.data.model.Course;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Course.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Course.class, Book.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();
+    public abstract BookDao bookDao();
 
     private static volatile AppDatabase INSTANCE;
     // 创建一个ExecutorService用于后台数据库操作
@@ -59,10 +63,11 @@ public abstract class AppDatabase extends RoomDatabase {
             // 在数据库创建时在新线程中执行数据插入
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in a separate thread
-                CourseDao dao = INSTANCE.courseDao();
+                CourseDao courseDao = INSTANCE.courseDao();
+                BookDao bookDao = INSTANCE.bookDao();
 
                 // 清空现有数据（可选，如果您希望每次应用启动都重新填充）
-                // dao.deleteAllCourses();
+                // courseDao.deleteAllCourses();
 
                 // 添加您的测试数据
                 List<Course> courseList = new ArrayList<>();
@@ -89,7 +94,18 @@ public abstract class AppDatabase extends RoomDatabase {
                 courseList.add(course2);
                 courseList.add(course3);
 
-                dao.insertAll(courseList);
+                courseDao.insertAll(courseList);
+
+                // 添加示例TXT书籍
+                Book sampleBook = new Book();
+                sampleBook.setTitle("示例教学资料.txt");
+                sampleBook.setFilePath("/storage/emulated/0/Download/示例教学资料.txt");
+                sampleBook.setFileType("txt");
+                sampleBook.setFileSize(1024L);
+                sampleBook.setAddedDate(new Date());
+                sampleBook.setCoverPath("@drawable/ic_book_cover");
+                
+                bookDao.insertBook(sampleBook);
             });
         }
         // 如果需要，还可以覆盖 onOpen() 方法

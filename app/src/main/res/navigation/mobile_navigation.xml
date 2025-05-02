@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_course_list"
             app:destination="@id/navigation_course_list" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_bookshelf"
+            app:destination="@id/navigation_bookshelf" />
     </fragment>
 
     <fragment
@@ -41,5 +44,11 @@
         android:name="com.example.onlineteach.ui.course.CourseListFragment"
         android:label="课程列表"
         tools:layout="@layout/fragment_course_list" />
+        
+    <fragment
+        android:id="@+id/navigation_bookshelf"
+        android:name="com.example.onlineteach.ui.bookshelf.BookshelfFragment"
+        android:label="书架"
+        tools:layout="@layout/fragment_bookshelf" />
 
 </navigation>

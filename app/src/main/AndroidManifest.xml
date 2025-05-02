@@ -37,6 +37,16 @@
             android:label="@string/app_name">
 
         </activity>
+        <!-- FileProvider配置，用于文件共享 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.onlineteach.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
