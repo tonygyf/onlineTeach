@@ -14,6 +14,10 @@ import com.example.onlineteach.data.model.User;
 import com.example.onlineteach.data.dao.CourseDao;
 import com.example.onlineteach.data.model.Course;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +32,10 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract BookDao bookDao();
 
     private static volatile AppDatabase INSTANCE;
-    // 创建一个ExecutorService用于后台数据库操作
+
+    // ✅ 添加静态 context
+    private static Context appContext;
+
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
@@ -37,16 +44,15 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
+                    // ✅ 保存传入的 context
+                    appContext = context.getApplicationContext();
+
                     INSTANCE = Room.databaseBuilder(
-                                    context.getApplicationContext(),
+                                    appContext,
                                     AppDatabase.class,
                                     "app_database"
                             )
-                            // 添加回调，在数据库创建或打开时执行
                             .addCallback(sRoomDatabaseCallback)
-                            // 如果在开发阶段频繁修改 schema，可以使用 fallbackToDestructiveMigration()
-                            // 发布应用时应移除或使用migrations
-                            // .fallbackToDestructiveMigration()
                             .build();
                 }
             }
@@ -54,22 +60,15 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    // 数据库创建/打开的回调
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 
-            // 在数据库创建时在新线程中执行数据插入
             databaseWriteExecutor.execute(() -> {
-                // Populate the database in a separate thread
                 CourseDao courseDao = INSTANCE.courseDao();
                 BookDao bookDao = INSTANCE.bookDao();
 
-                // 清空现有数据（可选，如果您希望每次应用启动都重新填充）
-                // courseDao.deleteAllCourses();
-
-                // 添加您的测试数据
                 List<Course> courseList = new ArrayList<>();
 
                 Course course1 = new Course();
@@ -96,22 +95,39 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 courseDao.insertAll(courseList);
 
-                // 添加示例TXT书籍
-                Book sampleBook = new Book();
-                sampleBook.setTitle("示例教学资料.txt");
-                sampleBook.setFilePath("/storage/emulated/0/Download/示例教学资料.txt");
-                sampleBook.setFileType("txt");
-                sampleBook.setFileSize(1024L);
-                sampleBook.setAddedDate(new Date());
-                sampleBook.setCoverPath("@drawable/ic_book_cover");
-                
-                bookDao.insertBook(sampleBook);
+                try {
+                    String fileName = "sample_book.txt";
+
+                    // ✅ 使用 appContext 替代 context
+                    InputStream inputStream = appContext.getAssets().open(fileName);
+                    File privateDir = appContext.getFilesDir();
+                    File outputFile = new File(privateDir, fileName);
+
+                    FileOutputStream outputStream = new FileOutputStream(outputFile);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                    outputStream.close();
+                    inputStream.close();
+
+                    Book sampleBook = new Book();
+                    sampleBook.setTitle("示例教学资料");
+                    sampleBook.setFilePath(outputFile.getAbsolutePath());
+                    sampleBook.setFileType("txt");
+                    sampleBook.setFileSize(outputFile.length());
+                    sampleBook.setAddedDate(new Date());
+                    sampleBook.setCoverPath("@drawable/ic_book_cover");
+
+                    bookDao.insertBook(sampleBook);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         }
-        // 如果需要，还可以覆盖 onOpen() 方法
     };
 
-    // 关闭 ExecutorService 的方法 (可选，但推荐)
     public static void shutdownExecutorService() {
         databaseWriteExecutor.shutdown();
     }

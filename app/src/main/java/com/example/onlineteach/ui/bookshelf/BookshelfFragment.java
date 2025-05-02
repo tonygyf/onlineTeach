@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import com.example.onlineteach.databinding.FragmentBookshelfBinding;
 import com.example.onlineteach.data.model.Book;
 import com.example.onlineteach.utils.FileUtils;
+import com.example.onlineteach.utils.ToastUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,10 +95,10 @@ public class BookshelfFragment extends Fragment {
             Book book = new Book(fileName, localFile.getAbsolutePath(), fileType, fileSize);
             viewModel.addBook(book);
 
-            Toast.makeText(requireContext(), "已添加书籍: " + fileName, Toast.LENGTH_SHORT).show();
+            ToastUtils.showShortToast(requireContext(), "已添加书籍: " + fileName);
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(requireContext(), "添加书籍失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            ToastUtils.showShortToast(requireContext(), "添加书籍失败: " + e.getMessage());
         }
     }
 

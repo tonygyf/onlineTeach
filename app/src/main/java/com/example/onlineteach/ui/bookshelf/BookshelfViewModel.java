@@ -18,12 +18,9 @@ import java.util.concurrent.Executors;
 public class BookshelfViewModel extends AndroidViewModel {
     private final BookRepository bookRepository;
     private final MutableLiveData<List<Book>> books = new MutableLiveData<>();
-    private final ExecutorService executorService;
-
     public BookshelfViewModel(@NonNull Application application) {
         super(application);
         bookRepository = new BookRepository(application);
-        executorService = Executors.newSingleThreadExecutor();
         loadBooks();
     }
 
@@ -32,30 +29,50 @@ public class BookshelfViewModel extends AndroidViewModel {
     }
 
     private void loadBooks() {
-        executorService.execute(() -> {
-            List<Book> bookList = bookRepository.getAllBooks();
-            books.postValue(bookList);
+        bookRepository.getAllBooks(new BookRepository.BookListCallback() {
+            @Override
+            public void onBooksLoaded(List<Book> bookList) {
+                books.postValue(bookList);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // 可以在这里处理错误，例如通知UI显示错误信息
+            }
         });
     }
 
     public void addBook(Book book) {
-        executorService.execute(() -> {
-            long id = bookRepository.addBook(book);
-            book.setId(id);
-            loadBooks(); // 重新加载数据
+        bookRepository.addBook(book, new BookRepository.BookOperationCallback() {
+            @Override
+            public void onSuccess() {
+                loadBooks(); // 成功后重新加载数据
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // 可以在这里处理错误，例如通知UI显示错误信息
+            }
         });
     }
 
     public void deleteBook(Book book) {
-        executorService.execute(() -> {
-            bookRepository.deleteBook(book);
-            loadBooks(); // 重新加载数据
+        bookRepository.deleteBook(book, new BookRepository.BookOperationCallback() {
+            @Override
+            public void onSuccess() {
+                loadBooks(); // 成功后重新加载数据
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // 可以在这里处理错误，例如通知UI显示错误信息
+            }
         });
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        executorService.shutdown();
+        bookRepository.shutdownExecutor();
     }
 }
