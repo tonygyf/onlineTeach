@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- res/drawable/bg_gradient.xml -->
+    <gradient xmlns:android="http://schemas.android.com/apk/res/android"
+        android:type="linear"
+        android:startColor="#FF6F00"
+        android:endColor="#FFD54F"
+        android:angle="90"/>
+
+</selector>

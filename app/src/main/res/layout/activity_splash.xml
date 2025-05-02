@@ -4,17 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash_background">
+    android:background="@android:color/white"
+    tools:context=".SplashActivity">
 
-    <ImageView
-        android:id="@+id/splashLogo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="启动页Logo"
-        android:scaleType="centerCrop"
-        android:src="@drawable/splash_logo4"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/splash_lottie"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        /> </androidx.constraintlayout.widget.ConstraintLayout>
+        app:lottie_rawRes="@raw/my_splash_animation"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="true"
+        app:lottie_repeatCount="0" />
+        
+    <TextView
+        android:id="@+id/splash_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="在线教育"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/splash_lottie"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

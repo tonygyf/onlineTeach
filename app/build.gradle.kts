@@ -52,4 +52,8 @@ dependencies {
     implementation(libs.room.runtime) // Room 运行时依赖
     annotationProcessor(libs.room.compiler) // Room 编译器依赖（用于生成代码）
 
+    // 添加Lottie依赖 (Kotlin Script 语法)
+    implementation("com.airbnb.android:lottie:6.3.0") // 使用双引号包裹依赖字符串
+    // 确保也添加了 Splash Screen API 依赖 (Kotlin Script 语法)
+    implementation("androidx.core:core-splashscreen:1.0.1") // 使用双引号包裹依赖字符串
 }
