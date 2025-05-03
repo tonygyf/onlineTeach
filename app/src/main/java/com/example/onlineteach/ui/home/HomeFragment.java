@@ -40,6 +40,9 @@ public class HomeFragment extends Fragment implements MenuAdapter.OnItemClickLis
         if (position == 0) { // 课程菜单项
             Navigation.findNavController(requireView())
                     .navigate(R.id.action_navigation_home_to_navigation_course_list);
+        } else if (position == 3) { // 分组菜单项
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.action_navigation_home_to_navigation_group_list);
         } else if (position == 4) { // 书架菜单项
             Navigation.findNavController(requireView())
                     .navigate(R.id.action_navigation_home_to_navigation_bookshelf);

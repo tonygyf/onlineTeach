@@ -9,8 +9,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.onlineteach.data.dao.BookDao;
 import com.example.onlineteach.data.dao.UserDao;
+import com.example.onlineteach.data.dao.GroupDao;
 import com.example.onlineteach.data.model.Book;
 import com.example.onlineteach.data.model.User;
+import com.example.onlineteach.data.model.Group;
+import com.example.onlineteach.data.model.GroupMember;
+import com.example.onlineteach.data.model.GroupMessage;
 import com.example.onlineteach.data.dao.CourseDao;
 import com.example.onlineteach.data.model.Course;
 
@@ -24,12 +28,13 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Course.class, Book.class}, version = 2, exportSchema = false)
+@Database(entities = {User.class, Course.class, Book.class, Group.class, GroupMember.class, GroupMessage.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();
     public abstract BookDao bookDao();
+    public abstract GroupDao groupDao();
 
     private static volatile AppDatabase INSTANCE;
 

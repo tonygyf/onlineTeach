@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_bookshelf"
             app:destination="@id/navigation_bookshelf" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_group_list"
+            app:destination="@id/navigation_group_list" />
     </fragment>
 
     <fragment
@@ -50,5 +53,11 @@
         android:name="com.example.onlineteach.ui.bookshelf.BookshelfFragment"
         android:label="书架"
         tools:layout="@layout/fragment_bookshelf" />
+        
+    <fragment
+        android:id="@+id/navigation_group_list"
+        android:name="com.example.onlineteach.ui.group.GroupListFragment"
+        android:label="分组列表"
+        tools:layout="@layout/fragment_group_list" />
 
 </navigation>
