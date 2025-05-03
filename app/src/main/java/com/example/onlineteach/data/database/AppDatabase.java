@@ -10,12 +10,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.onlineteach.data.dao.BookDao;
 import com.example.onlineteach.data.dao.UserDao;
 import com.example.onlineteach.data.dao.GroupDao;
+import com.example.onlineteach.data.dao.CourseDao;
+
 import com.example.onlineteach.data.model.Book;
 import com.example.onlineteach.data.model.User;
 import com.example.onlineteach.data.model.Group;
 import com.example.onlineteach.data.model.GroupMember;
 import com.example.onlineteach.data.model.GroupMessage;
-import com.example.onlineteach.data.dao.CourseDao;
 import com.example.onlineteach.data.model.Course;
 
 import java.io.File;
@@ -37,8 +38,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract GroupDao groupDao();
 
     private static volatile AppDatabase INSTANCE;
-
-    // ✅ 添加静态 context
     private static Context appContext;
 
     private static final int NUMBER_OF_THREADS = 4;
@@ -49,9 +48,7 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
-                    // ✅ 保存传入的 context
                     appContext = context.getApplicationContext();
-
                     INSTANCE = Room.databaseBuilder(
                                     appContext,
                                     AppDatabase.class,
@@ -71,9 +68,19 @@ public abstract class AppDatabase extends RoomDatabase {
             super.onCreate(db);
 
             databaseWriteExecutor.execute(() -> {
+                UserDao userDao = INSTANCE.userDao();
                 CourseDao courseDao = INSTANCE.courseDao();
                 BookDao bookDao = INSTANCE.bookDao();
+                GroupDao groupDao = INSTANCE.groupDao();
 
+                // ✅ 初始化默认用户
+//                User defaultUser = new User();
+//                defaultUser.setUsername("admin");
+//                defaultUser.setEmail("admin@example.com");
+//                defaultUser.setPassword("password"); // 明文仅限测试
+//                userDao.insertUser(defaultUser); // 该用户将获得 ID = 1
+
+                // ✅ 初始化课程
                 List<Course> courseList = new ArrayList<>();
 
                 Course course1 = new Course();
@@ -100,10 +107,9 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 courseDao.insertAll(courseList);
 
+                // ✅ 初始化图书
                 try {
                     String fileName = "sample_book.txt";
-
-                    // ✅ 使用 appContext 替代 context
                     InputStream inputStream = appContext.getAssets().open(fileName);
                     File privateDir = new File(appContext.getFilesDir(), "books");
                     if (!privateDir.exists()) {
@@ -132,6 +138,28 @@ public abstract class AppDatabase extends RoomDatabase {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                // ✅ 初始化群组
+                Group group = new Group();
+                group.setName("教学交流群");
+                group.setDescription("用于教学经验交流");
+//                group.setCreateTime(new Date());
+                long groupId = groupDao.insertGroup(group);
+
+                // ✅ 初始化群成员
+                GroupMember member = new GroupMember();
+                member.setGroupId((int)groupId);
+                member.setUserId(1); // 假设用户ID 1
+//                member.setJoinDate(new Date());
+                groupDao.insertGroupMember(member);
+
+                // ✅ 初始化群消息
+                GroupMessage message = new GroupMessage();
+                message.setGroupId((int)groupId);
+                message.setSenderId(1); // 同样假设用户ID 1
+                message.setContent("欢迎加入教学交流群！");
+//                message.setTimestamp(new Date());
+                groupDao.insertGroupMessage(message);
             });
         }
     };
