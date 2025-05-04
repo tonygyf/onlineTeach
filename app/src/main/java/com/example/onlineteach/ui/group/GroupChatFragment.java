@@ -71,6 +71,7 @@ public class GroupChatFragment extends Fragment {
         // 设置RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setStackFromEnd(true); // 从底部开始显示
+        layoutManager.setReverseLayout(true); // 反转布局，使新消息显示在底部
         recyclerView.setLayoutManager(layoutManager);
 
         // 找到 BottomNavigationView
@@ -114,9 +115,9 @@ public class GroupChatFragment extends Fragment {
         viewModel.getMessages().observe(getViewLifecycleOwner(), messages -> {
             if (messages != null) {
                 adapter.setMessages(messages);
-                // 滚动到最新消息
+                // 如果消息列表不为空，滚动到最新消息
                 if (messages.size() > 0) {
-                    recyclerView.smoothScrollToPosition(messages.size() - 1);
+                    recyclerView.scrollToPosition(0); // 由于布局反转，0位置就是最新消息
                 }
             }
         });
