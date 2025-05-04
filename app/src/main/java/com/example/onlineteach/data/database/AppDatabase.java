@@ -143,14 +143,17 @@ public abstract class AppDatabase extends RoomDatabase {
                 Group group = new Group();
                 group.setName("教学交流群");
                 group.setDescription("用于教学经验交流");
-//                group.setCreateTime(new Date());
+                group.setCreatorId(1); // 设置创建者ID为默认用户
+                group.setCreateTime(System.currentTimeMillis()); // 设置创建时间
+                group.setMemberCount(1); // 设置成员数量
                 long groupId = groupDao.insertGroup(group);
 
                 // ✅ 初始化群成员
                 GroupMember member = new GroupMember();
                 member.setGroupId((int)groupId);
                 member.setUserId(1); // 假设用户ID 1
-//                member.setJoinDate(new Date());
+                member.setJoinTime(System.currentTimeMillis()); // 设置加入时间
+                member.setAdmin(true); // 设置为管理员
                 groupDao.insertGroupMember(member);
 
                 // ✅ 初始化群消息
@@ -158,7 +161,8 @@ public abstract class AppDatabase extends RoomDatabase {
                 message.setGroupId((int)groupId);
                 message.setSenderId(1); // 同样假设用户ID 1
                 message.setContent("欢迎加入教学交流群！");
-//                message.setTimestamp(new Date());
+                message.setSendTime(System.currentTimeMillis()); // 设置发送时间
+                message.setMessageType(0); // 设置消息类型为文本
                 groupDao.insertGroupMessage(message);
             });
         }

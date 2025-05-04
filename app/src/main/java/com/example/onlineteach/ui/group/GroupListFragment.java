@@ -1,6 +1,7 @@
 package com.example.onlineteach.ui.group;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import com.example.onlineteach.R;
 import com.example.onlineteach.data.model.Group;
 import com.example.onlineteach.utils.ToastUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class GroupListFragment extends Fragment implements GroupListAdapter.OnGroupClickListener {
 
@@ -58,7 +61,16 @@ public class GroupListFragment extends Fragment implements GroupListAdapter.OnGr
 
         // 观察群组列表数据变化
         mViewModel.getGroups().observe(getViewLifecycleOwner(), groups -> {
-            adapter.setGroups(groups);
+            Log.d("GroupListFragment", "群组数据更新，数量: " + (groups != null ? groups.size() : 0));
+            if (groups != null && !groups.isEmpty()) {
+                adapter.setGroups(groups);
+                // 确保适配器更新后刷新UI
+                adapter.notifyDataSetChanged();
+            } else {
+                Log.d("GroupListFragment", "群组列表为空");
+                // 显示空列表
+                adapter.setGroups(new ArrayList<>());
+            }
         });
     }
 

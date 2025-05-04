@@ -1,5 +1,6 @@
 package com.example.onlineteach.ui.group;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,8 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
 
     public void setGroups(List<Group> groups) {
         this.groups = groups;
+        // 记录日志，帮助调试
+        Log.d("GroupListAdapter", "设置群组数据，数量: " + (groups != null ? groups.size() : 0));
         notifyDataSetChanged();
     }
 
