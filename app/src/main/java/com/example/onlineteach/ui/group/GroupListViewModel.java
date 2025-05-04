@@ -26,21 +26,9 @@ public class GroupListViewModel extends AndroidViewModel {
         groupRepository = new GroupRepository(application);
         userRepository = new UserRepository(application);
         
-        // 获取当前登录用户的ID
-        int userId = userRepository.getLoggedInUserId();
-        Log.d(TAG, "当前登录用户ID: " + userId);
-        
-        if (userId != -1) {
-            // 获取用户加入的所有群组
-            groups = groupRepository.getGroupsForUser(userId);
-            Log.d(TAG, "已获取用户群组LiveData");
-        } else {
-            // 如果没有登录用户，返回空列表
-            MutableLiveData<List<Group>> emptyGroups = new MutableLiveData<>();
-            emptyGroups.setValue(new ArrayList<>());
-            groups = emptyGroups;
-            Log.d(TAG, "用户未登录，返回空群组列表");
-        }
+        // 获取所有群组，而不是只获取用户加入的群组
+        groups = groupRepository.getAllGroups();
+        Log.d(TAG, "已获取所有群组LiveData");
         
         // 添加测试数据（如果需要测试）
         addSampleGroupsIfNeeded();
