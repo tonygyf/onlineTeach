@@ -257,6 +257,15 @@ public class UserRepository {
             }
         });
     }
+    
+    /**
+     * 根据用户ID获取用户信息
+     * @param userId 用户ID
+     * @return 用户对象，如果不存在则返回null
+     */
+    public User getUserById(int userId) {
+        return userDao.getUserById(userId);
+    }
 
     // TODO: 在Repository销毁时关闭执行器
     // 例如，如果Repository是单例或者与ViewModel绑定，可以在适当的时候调用 executorService.shutdown();

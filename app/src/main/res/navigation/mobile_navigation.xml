@@ -58,6 +58,21 @@
         android:id="@+id/navigation_group_list"
         android:name="com.example.onlineteach.ui.group.GroupListFragment"
         android:label="分组列表"
-        tools:layout="@layout/fragment_group_list" />
+        tools:layout="@layout/fragment_group_list">
+        <action
+            android:id="@+id/action_navigation_group_list_to_navigation_group_chat"
+            app:destination="@id/navigation_group_chat" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/navigation_group_chat"
+        android:name="com.example.onlineteach.ui.group.GroupChatFragment"
+        android:label="群组聊天"
+        tools:layout="@layout/fragment_group_chat">
+        <argument
+            android:name="group_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
 
 </navigation>

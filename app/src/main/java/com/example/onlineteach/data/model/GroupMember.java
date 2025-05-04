@@ -18,7 +18,8 @@ import androidx.room.ColumnInfo;
                         onDelete = ForeignKey.CASCADE)
         },
         indices = {
-                @Index(value = {"user_id", "group_id"}, unique = true)
+                @Index(value = {"user_id", "group_id"}, unique = true),
+                @Index(value = {"group_id"})
         })
 public class GroupMember {
     @PrimaryKey(autoGenerate = true)

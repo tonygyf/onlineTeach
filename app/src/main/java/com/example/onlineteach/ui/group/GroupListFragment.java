@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -76,7 +78,14 @@ public class GroupListFragment extends Fragment implements GroupListAdapter.OnGr
 
     @Override
     public void onGroupClick(Group group) {
-        // TODO: 导航到群组聊天页面
-        ToastUtils.showShortToast(getContext(), "进入群组: " + group.getName());
+        // 导航到群组聊天页面
+        Bundle args = new Bundle();
+        args.putInt("group_id", group.getGroupId());
+        
+        // 使用Navigation组件导航到群组聊天页面
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+        navController.navigate(R.id.action_navigation_group_list_to_navigation_group_chat, args);
+        
+        Log.d("GroupListFragment", "导航到群组聊天页面: " + group.getName() + ", ID: " + group.getGroupId());
     }
 }

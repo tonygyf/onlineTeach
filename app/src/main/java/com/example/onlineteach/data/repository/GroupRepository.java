@@ -159,6 +159,22 @@ public class GroupRepository {
     public LiveData<List<GroupMessage>> getRecentGroupMessages(int groupId, int limit) {
         return groupDao.getRecentGroupMessages(groupId, limit);
     }
+    
+    public void getGroupById(int groupId, GroupOperationCallback callback) {
+        executorService.execute(() -> {
+            try {
+                Group group = groupDao.getGroupById(groupId);
+                if (group != null) {
+                    callback.onSuccess(group);
+                } else {
+                    callback.onError("群组不存在");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting group by id: " + e.getMessage());
+                callback.onError("获取群组信息过程中发生错误");
+            }
+        });
+    }
 
     public void sendMessage(GroupMessage message, MessageCallback callback) {
         executorService.execute(() -> {
