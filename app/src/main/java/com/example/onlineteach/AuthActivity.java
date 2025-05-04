@@ -11,16 +11,22 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.onlineteach.data.dao.UserDao;
 import com.example.onlineteach.data.database.AppDatabase;
 import com.example.onlineteach.data.model.User;
+import com.example.onlineteach.dialog.LottieLoadingDialog;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AuthActivity extends AppCompatActivity {
     // 在你的 AuthActivity.java 的 onCreate 方法中 (或者应用的某个初始化位置)
+//    dialog类使用
+//    private LottieLoadingDialog loadingDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
+
+        // 初始化 LottieLoadingDialog
+//        loadingDialog = new LottieLoadingDialog(this);
 
         // 在后台线程插入测试用户 (仅用于测试，实际应用应有注册功能)
         ExecutorService executorService = Executors.newSingleThreadExecutor();

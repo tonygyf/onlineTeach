@@ -19,6 +19,7 @@ import android.widget.Toast; // 导入 Toast
 import com.example.onlineteach.MainActivity; // 替换为你的主 Activity 类路径
 import com.example.onlineteach.R; // 导入你的 R 文件
 import com.example.onlineteach.databinding.FragmentLoginBinding; // 导入 View Binding 生成的类
+import com.example.onlineteach.dialog.LottieLoadingDialog;
 import com.example.onlineteach.utils.ToastUtils;
 
 
@@ -26,6 +27,7 @@ public class LoginFragment extends Fragment {
 
     private LoginViewModel loginViewModel;
     private FragmentLoginBinding binding; // 使用 View Binding
+    private LottieLoadingDialog loadingDialog;  // 引入 LottieLoadingDialog
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -36,6 +38,9 @@ public class LoginFragment extends Fragment {
 
         // 获取 LoginViewModel 实例
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+
+        // 初始化 LottieLoadingDialog
+        loadingDialog = new LottieLoadingDialog(requireContext());
 
         // 观察 ViewModel 中的登录结果 LiveData
         loginViewModel.getLoginResult().observe(getViewLifecycleOwner(), result -> {
@@ -55,7 +60,14 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-
+        // 观察加载状态 LiveData
+        loginViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading) {
+                loadingDialog.show();  // 显示加载动画
+            } else {
+                loadingDialog.dismiss();  // 隐藏加载动画
+            }
+        });
 
         // 设置登录按钮点击事件，获取输入并调用 ViewModel
         binding.buttonLogin.setOnClickListener(v -> {
