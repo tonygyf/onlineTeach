@@ -10,7 +10,7 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
-        app:lottie_fileName="teacher.json"
+        app:lottie_fileName="book.json"
         app:lottie_autoPlay="true"
         app:lottie_loop="false" />
     <!-- 一行文字，位于动画下方或顶部 -->
