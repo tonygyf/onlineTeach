@@ -1,36 +1,45 @@
 package com.example.onlineteach;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.view.WindowManager;
+import androidx.appcompat.app.AppCompatActivity;
+import com.airbnb.lottie.LottieAnimationView;
 
 public class SplashActivity extends AppCompatActivity {
-
-    private static final long SPLASH_DURATION_MS = 3000; // 设置开屏显示的时间，例如 3000 毫秒 (3 秒)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 隐藏状态栏，实现全屏显示
+        // 设置全屏
         getWindow().setFlags(
-            android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
-        setContentView(R.layout.activity_splash); // 设置布局文件
 
-        // 使用 Handler 来实现延时跳转
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+        setContentView(R.layout.activity_splash); // 设置布局
+
+        // 获取 Lottie 视图
+        LottieAnimationView lottieView = findViewById(R.id.lottieView);
+
+        // 设置动画完成监听
+        lottieView.addAnimatorListener(new Animator.AnimatorListener() {
             @Override
-            public void run() {
-                // 创建 Intent 跳转到主界面 Activity
-                Intent intent = new Intent(SplashActivity.this, AuthActivity.class);
-                startActivity(intent); // 启动认证界面
+            public void onAnimationStart(Animator animator) {}
 
-                // 结束当前的 Splash Activity，防止用户按返回键回到开屏界面
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                // 动画播放结束后跳转
+                startActivity(new Intent(SplashActivity.this, AuthActivity.class));
                 finish();
             }
-        }, SPLASH_DURATION_MS); // 延时的时间
+
+            @Override
+            public void onAnimationCancel(Animator animator) {}
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {}
+        });
     }
 }

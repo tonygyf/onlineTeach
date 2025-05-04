@@ -51,5 +51,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.room.runtime) // Room 运行时依赖
     annotationProcessor(libs.room.compiler) // Room 编译器依赖（用于生成代码）
+//添加kts版本lottie依赖
+    implementation("com.airbnb.android:lottie:6.1.0")
 
 }
