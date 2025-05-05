@@ -66,4 +66,5 @@ public interface GroupDao {
 
     @Query("SELECT * FROM group_messages WHERE group_id = :groupId ORDER BY send_time DESC LIMIT :limit")
     LiveData<List<GroupMessage>> getRecentGroupMessages(int groupId, int limit);
+
 }

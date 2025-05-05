@@ -129,9 +129,9 @@ public class GroupListViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(Group group) {
                 // 检查用户是否已在群组中
-                executorService.execute(() -> {
-                    try {
-                        boolean isInGroup = groupRepository.isUserInGroup(groupId, userId);
+                groupRepository.isUserInGroup(groupId, userId, new GroupRepository.UserInGroupCallback() {
+                    @Override
+                    public void onResult(boolean isInGroup) {
                         if (isInGroup) {
                             // 用户已在群组中，直接回调成功
                             callback.onSuccess(group);
@@ -149,12 +149,17 @@ public class GroupListViewModel extends AndroidViewModel {
                                 public void onError(String errorMessage) {
                                     Log.e(TAG, "自动加入群组失败: " + errorMessage);
                                     toastMessage.postValue(errorMessage);
+                                    callback.onError(errorMessage);
                                 }
                             });
                         }
-                    } catch (Exception e) {
-                        Log.e(TAG, "检查用户是否在群组中时发生错误: " + e.getMessage());
-                        toastMessage.postValue("检查群组成员状态时发生错误");
+                    }
+                    
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.e(TAG, "检查用户是否在群组中时发生错误: " + errorMessage);
+                        toastMessage.postValue("检查群组成员状态时发生错误: " + errorMessage);
+                        callback.onError(errorMessage);
                     }
                 });
             }

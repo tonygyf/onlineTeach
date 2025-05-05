@@ -180,10 +180,26 @@ public class GroupRepository {
      * 检查用户是否在群组中
      * @param groupId 群组ID
      * @param userId 用户ID
-     * @return 用户是否在群组中
+     * @param callback 回调接口，用于返回结果
      */
-    public boolean isUserInGroup(int groupId, int userId) {
-        return groupDao.isUserInGroup(groupId, userId);
+    public void isUserInGroup(int groupId, int userId, UserInGroupCallback callback) {
+        executorService.execute(() -> {
+            try {
+                boolean isInGroup = groupDao.isUserInGroup(groupId, userId);
+                callback.onResult(isInGroup);
+            } catch (Exception e) {
+                Log.e(TAG, "Error checking if user is in group: " + e.getMessage());
+                callback.onError("检查用户是否在群组中时发生错误");
+            }
+        });
+    }
+    
+    /**
+     * 用户在群组中检查结果的回调接口
+     */
+    public interface UserInGroupCallback {
+        void onResult(boolean isInGroup);
+        void onError(String errorMessage);
     }
 
     public void sendMessage(GroupMessage message, MessageCallback callback) {
