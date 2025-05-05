@@ -175,6 +175,16 @@ public class GroupRepository {
             }
         });
     }
+    
+    /**
+     * 检查用户是否在群组中
+     * @param groupId 群组ID
+     * @param userId 用户ID
+     * @return 用户是否在群组中
+     */
+    public boolean isUserInGroup(int groupId, int userId) {
+        return groupDao.isUserInGroup(groupId, userId);
+    }
 
     public void sendMessage(GroupMessage message, MessageCallback callback) {
         executorService.execute(() -> {

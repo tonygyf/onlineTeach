@@ -99,9 +99,8 @@ public class GroupChatFragment extends Fragment {
         // 设置群组ID
         viewModel.setGroupId(groupId);
 
-        // 初始化适配器
-        UserRepository userRepository = new UserRepository(requireContext());
-        adapter = new GroupChatAdapter(viewModel.getCurrentUserId(), userRepository);
+        // 初始化适配器 - 使用ViewModel而不是直接使用UserRepository
+        adapter = new GroupChatAdapter(viewModel.getCurrentUserId(), viewModel, getViewLifecycleOwner());
         recyclerView.setAdapter(adapter);
 
         // 观察群组信息变化

@@ -7,12 +7,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlineteach.R;
 import com.example.onlineteach.data.model.GroupMessage;
 import com.example.onlineteach.data.model.User;
-import com.example.onlineteach.data.repository.UserRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,11 +27,13 @@ public class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private List<GroupMessage> messages = new ArrayList<>();
     private int currentUserId;
-    private UserRepository userRepository;
+    private GroupChatViewModel viewModel;
+    private LifecycleOwner lifecycleOwner;
 
-    public GroupChatAdapter(int currentUserId, UserRepository userRepository) {
+    public GroupChatAdapter(int currentUserId, GroupChatViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.currentUserId = currentUserId;
-        this.userRepository = userRepository;
+        this.viewModel = viewModel;
+        this.lifecycleOwner = lifecycleOwner;
     }
 
     @Override
@@ -133,12 +135,13 @@ public class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
             timeText.setText(sdf.format(new Date(message.getSendTime())));
 
-            // 获取发送者信息
-            User sender = userRepository.getUserById(message.getSenderId());
-            if (sender != null) {
-                nameText.setText(sender.getUserName());
-                // 如果有用户头像，可以在这里设置
-            }
+            // 异步获取发送者信息
+            viewModel.getUserInfo(message.getSenderId()).observe(lifecycleOwner, sender -> {
+                if (sender != null) {
+                    nameText.setText(sender.getUserName());
+                    // 如果有用户头像，可以在这里设置
+                }
+            });
         }
     }
 }

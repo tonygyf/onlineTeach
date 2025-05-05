@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlineteach.R;
 import com.example.onlineteach.data.model.Group;
+import com.example.onlineteach.data.repository.GroupRepository;
 import com.example.onlineteach.utils.ToastUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -39,13 +40,13 @@ public class GroupListFragment extends Fragment implements GroupListAdapter.OnGr
         View root = inflater.inflate(R.layout.fragment_group_list, container, false);
         recyclerView = root.findViewById(R.id.recycler_view_groups);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        
+
         fabCreateGroup = root.findViewById(R.id.fab_create_group);
         fabCreateGroup.setOnClickListener(v -> {
             // TODO: 实现创建群组的对话框
             ToastUtils.showShortToast(getContext(), "创建新群组");
         });
-        
+
         return root;
     }
 
@@ -53,9 +54,9 @@ public class GroupListFragment extends Fragment implements GroupListAdapter.OnGr
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // 使用AndroidViewModel的Factory来创建ViewModel
-        mViewModel = new ViewModelProvider(this, 
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication()))
-            .get(GroupListViewModel.class);
+        mViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication()))
+                .get(GroupListViewModel.class);
 
         // 初始化适配器
         GroupListAdapter adapter = new GroupListAdapter(this);
@@ -74,18 +75,46 @@ public class GroupListFragment extends Fragment implements GroupListAdapter.OnGr
                 adapter.setGroups(new ArrayList<>());
             }
         });
+
+        // 观察 ViewModel 中的 toastMessage，并显示 Toast
+        mViewModel.getToastMessage().observe(getViewLifecycleOwner(), message -> {
+            if (message != null && !message.isEmpty()) {
+                ToastUtils.showShortToast(getContext(), message);
+                // 清除消息，避免重复显示
+                mViewModel.clearToastMessage();
+            }
+        });
     }
 
     @Override
     public void onGroupClick(Group group) {
-        // 导航到群组聊天页面
-        Bundle args = new Bundle();
-        args.putInt("group_id", group.getGroupId());
-        
-        // 使用Navigation组件导航到群组聊天页面
-        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-        navController.navigate(R.id.action_navigation_group_list_to_navigation_group_chat, args);
-        
-        Log.d("GroupListFragment", "导航到群组聊天页面: " + group.getName() + ", ID: " + group.getGroupId());
+        // 获取当前登录用户ID
+        int userId = mViewModel.getUserRepository().getLoggedInUserId();
+        if (userId == -1) {
+            ToastUtils.showShortToast(getContext(), "请先登录");
+            return;
+        }
+
+        // 检查用户是否已在群组中，如果不是则自动加入
+        mViewModel.checkAndJoinGroup(group.getGroupId(), new GroupRepository.GroupOperationCallback() {
+            @Override
+            public void onSuccess(Group updatedGroup) {
+                // 导航到群组聊天页面
+                Bundle args = new Bundle();
+                args.putInt("group_id", updatedGroup.getGroupId());
+
+                // 使用Navigation组件导航到群组聊天页面
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                navController.navigate(R.id.action_navigation_group_list_to_navigation_group_chat, args);
+
+                Log.d("GroupListFragment", "导航到群组聊天页面: " + updatedGroup.getName() + ", ID: " + updatedGroup.getGroupId());
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                //  这里不再直接显示 Toast，ViewModel 会处理
+                Log.e("GroupListFragment", "加入群组失败: " + errorMessage);
+            }
+        });
     }
 }

@@ -9,10 +9,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.onlineteach.data.model.Group;
 import com.example.onlineteach.data.model.GroupMessage;
+import com.example.onlineteach.data.model.User;
 import com.example.onlineteach.data.repository.GroupRepository;
 import com.example.onlineteach.data.repository.UserRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GroupChatViewModel extends AndroidViewModel {
     private static final String TAG = "GroupChatViewModel";
@@ -23,11 +28,21 @@ public class GroupChatViewModel extends AndroidViewModel {
     private LiveData<List<GroupMessage>> messages;
     private MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private MutableLiveData<Group> groupInfo = new MutableLiveData<>();
+    private Map<Integer, MutableLiveData<User>> userCache = new HashMap<>();
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public GroupChatViewModel(Application application) {
         super(application);
         groupRepository = new GroupRepository(application);
         userRepository = new UserRepository(application);
+    }
+    
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+        }
     }
 
     public void setGroupId(int groupId) {
@@ -94,5 +109,40 @@ public class GroupChatViewModel extends AndroidViewModel {
 
     public int getCurrentUserId() {
         return userRepository.getLoggedInUserId();
+    }
+    
+    /**
+     * 获取用户信息的LiveData
+     * @param userId 用户ID
+     * @return 包含用户信息的LiveData
+     */
+    public LiveData<User> getUserInfo(int userId) {
+        // 检查缓存中是否已有该用户的LiveData
+        if (!userCache.containsKey(userId)) {
+            // 创建新的LiveData并添加到缓存
+            MutableLiveData<User> userData = new MutableLiveData<>();
+            userCache.put(userId, userData);
+            
+            // 在后台线程中加载用户数据
+            loadUserData(userId, userData);
+        }
+        return userCache.get(userId);
+    }
+    
+    /**
+     * 在后台线程中加载用户数据
+     */
+    private void loadUserData(int userId, MutableLiveData<User> userData) {
+        executorService.execute(() -> {
+            try {
+                // 从数据库获取用户信息
+                User user = userRepository.getUserById(userId);
+                // 在主线程中更新LiveData
+                userData.postValue(user);
+            } catch (Exception e) {
+                Log.e(TAG, "加载用户数据失败: " + e.getMessage());
+                errorMessage.postValue("加载用户数据失败");
+            }
+        });
     }
 }
