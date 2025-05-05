@@ -1,5 +1,8 @@
 package com.example.onlineteach.ui.group;
 
+import static com.example.onlineteach.BR.viewModel;
+
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +24,7 @@ import com.example.onlineteach.data.model.Group;
 import com.example.onlineteach.data.repository.GroupRepository;
 import com.example.onlineteach.utils.ToastUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
@@ -37,17 +41,39 @@ public class GroupListFragment extends Fragment implements GroupListAdapter.OnGr
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_group_list, container, false);
-        recyclerView = root.findViewById(R.id.recycler_view_groups);
+        View view = inflater.inflate(R.layout.fragment_group_list, container, false);
+
+        recyclerView = view.findViewById(R.id.recycler_view_groups);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fabCreateGroup = root.findViewById(R.id.fab_create_group);
-        fabCreateGroup.setOnClickListener(v -> {
-            // TODO: 实现创建群组的对话框
-            ToastUtils.showShortToast(getContext(), "创建新群组");
-        });
+        fabCreateGroup = view.findViewById(R.id.fab_create_group);
+        fabCreateGroup.setOnClickListener(v -> showCreateGroupDialog());
 
-        return root;
+        return view;
+    }
+
+    private void showCreateGroupDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_group, null);
+        TextInputEditText editTextGroupName = dialogView.findViewById(R.id.edit_text_group_name);
+        TextInputEditText editTextGroupDescription = dialogView.findViewById(R.id.edit_text_group_description);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("创建新群组")
+                .setView(dialogView)
+                .setPositiveButton("创建", (dialog, which) -> {
+                    String groupName = editTextGroupName.getText().toString().trim();
+                    String groupDescription = editTextGroupDescription.getText().toString().trim();
+
+                    if (groupName.isEmpty()) {
+                        Toast.makeText(getContext(), "请输入群组名称", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    mViewModel.createGroup(groupName, groupDescription);
+
+                })
+                .setNegativeButton("取消", null)
+                .show();
     }
 
     @Override
