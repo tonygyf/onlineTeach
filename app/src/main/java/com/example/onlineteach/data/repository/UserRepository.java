@@ -81,13 +81,16 @@ public class UserRepository {
 
         executorService.execute(() -> {
             Log.d(TAG, "Executing login database query for user: " + username); // 添加日志
-            // TODO: 根据用户名或学号查询用户，并验证密码
-            // 使用你 UserDao 中实际的查询方法
-            User user = userDao.getUserByUserName(username); // 假设通过用户名查询
+            // 先尝试通过用户名查询用户
+            User user = userDao.getUserByUserName(username);
+            
+            // 如果用户名不存在，再尝试通过学号查询
+            if (user == null) {
+                user = userDao.findUserByStudentId(username);
+            }
 
-            // TODO: 在这里添加实际的密码验证逻辑
-            // boolean passwordMatches = yourPasswordHashingUtil.verifyPassword(password, user.getHashedPassword());
-            boolean passwordMatches = true; // 暂时模拟密码正确，请替换为实际的密码验证逻辑
+            // 验证用户存在且密码匹配
+            boolean passwordMatches = (user != null && user.getPassword() != null && user.getPassword().equals(password));
 
             if (user != null && passwordMatches) {
                 Log.d(TAG, "User found and password matches for user: " + username); // 添加日志
