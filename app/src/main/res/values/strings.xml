@@ -2,8 +2,10 @@
     <string name="app_name">onlineTeach</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">我的群组</string>
+    <string name="title_group_list">分组列表</string>
     <string name="title_personal">个人信息</string>
+    <string name="title_bookshelf">我的书架</string>
     <string name="menu_item_icon_description">菜单项图标</string>
     <string name="navigate_arrow_description">导航箭头</string>
 </resources>

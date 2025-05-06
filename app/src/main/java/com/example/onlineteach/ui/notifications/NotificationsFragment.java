@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -40,6 +42,19 @@ public class NotificationsFragment extends Fragment implements GroupListAdapter.
         emptyTextView = view.findViewById(R.id.text_empty_groups);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 确保在恢复到此Fragment时，ActionBar显示正确的标题
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(R.string.title_notifications);
+            }
+        }
     }
 
     @Override

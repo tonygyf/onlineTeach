@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -54,5 +55,21 @@ public class HomeFragment extends Fragment implements MenuAdapter.OnItemClickLis
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 确保在恢复到此Fragment时，ActionBar显示正确的标题
+        if (getActivity() instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                androidx.appcompat.app.ActionBar actionBar = activity.getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setTitle(R.string.title_home);
+                    actionBar.show();
+                }
+            }
+        }
     }
 }

@@ -166,6 +166,8 @@ public class GroupChatFragment extends Fragment {
             ActionBar actionBar = activity.getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
+                // 不需要在这里设置标题，Navigation组件会根据导航图中的label自动设置
+                // 让系统自动处理标题恢复
             }
             // 显示 BottomNavigationView
             if (bottomNavigationView != null) {

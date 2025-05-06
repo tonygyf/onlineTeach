@@ -7,9 +7,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.onlineteach.R;
 import com.example.onlineteach.databinding.FragmentDashboardBinding;
 
 public class DashboardFragment extends Fragment {
@@ -27,6 +29,22 @@ public class DashboardFragment extends Fragment {
         final TextView textView = binding.textDashboard;
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 确保在恢复到此Fragment时，ActionBar显示正确的标题
+        if (getActivity() instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                androidx.appcompat.app.ActionBar actionBar = activity.getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setTitle(R.string.title_dashboard);
+                    actionBar.show();
+                }
+            }
+        }
     }
 
     @Override

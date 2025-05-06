@@ -1,5 +1,6 @@
 package com.example.onlineteach.ui.personalinfo;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
@@ -284,6 +285,22 @@ public class PersonalInfoFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 确保在恢复到此Fragment时，ActionBar显示正确的标题
+        if (getActivity() instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                androidx.appcompat.app.ActionBar actionBar = activity.getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setTitle(R.string.title_personal);
+                    actionBar.show();
+                }
+            }
+        }
     }
 
     @Override
