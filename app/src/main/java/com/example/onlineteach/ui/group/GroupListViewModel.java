@@ -87,7 +87,7 @@ public class GroupListViewModel extends AndroidViewModel {
                 @Override
                 public void onError(String errorMessage) {
                     // 处理错误
-                    toastMessage.postValue(errorMessage);
+//                    toastMessage.postValue(errorMessage);
                 }
             });
         }
@@ -158,7 +158,7 @@ public class GroupListViewModel extends AndroidViewModel {
                     @Override
                     public void onError(String errorMessage) {
                         Log.e(TAG, "检查用户是否在群组中时发生错误: " + errorMessage);
-                        toastMessage.postValue("检查群组成员状态时发生错误: " + errorMessage);
+//                        toastMessage.postValue("检查群组成员状态时发生错误: " + errorMessage);
                         callback.onError(errorMessage);
                     }
                 });
@@ -167,7 +167,7 @@ public class GroupListViewModel extends AndroidViewModel {
             @Override
             public void onError(String errorMessage) {
                 Log.e(TAG, "获取群组信息失败: " + errorMessage);
-                toastMessage.postValue(errorMessage);
+//                toastMessage.postValue(errorMessage);
             }
         });
     }
