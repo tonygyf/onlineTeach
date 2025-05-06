@@ -58,19 +58,20 @@ public class DashboardFragment extends Fragment {
 
         // 添加介绍页面
         introSlides.add(new IntroSlide(
-                R.drawable.ic_dashboard_black_24dp,
+                "lesson.json",
                 "在线教学平台",
                 "随时随地学习，提高学习效率"));
 
         introSlides.add(new IntroSlide(
-                R.drawable.ic_home_black_24dp,
+                "student.json",
                 "丰富的课程资源",
                 "各类课程资源，满足不同学习需求"));
 
         introSlides.add(new IntroSlide(
-                R.drawable.ic_notifications_black_24dp,
+                "teacher.json",
                 "实时互动交流",
                 "师生互动，小组讨论，提高学习体验"));
+
     }
 
     /**

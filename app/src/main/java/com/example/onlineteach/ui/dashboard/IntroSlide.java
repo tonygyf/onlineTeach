@@ -1,19 +1,18 @@
 package com.example.onlineteach.ui.dashboard;
 
 public class IntroSlide {
-
-    private final int image;
+    private final String lottieFileName;
     private final String title;
     private final String description;
 
-    public IntroSlide(int image, String title, String description) {
-        this.image = image;
+    public IntroSlide(String lottieFileName, String title, String description) {
+        this.lottieFileName = lottieFileName;
         this.title = title;
         this.description = description;
     }
 
-    public int getImage() {
-        return image;
+    public String getLottieFileName() {
+        return lottieFileName;
     }
 
     public String getTitle() {

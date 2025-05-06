@@ -3,12 +3,12 @@ package com.example.onlineteach.ui.dashboard;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.onlineteach.R;
 
 import java.util.List;
@@ -43,19 +43,20 @@ public class IntroSlideAdapter extends RecyclerView.Adapter<IntroSlideAdapter.In
 
     static class IntroSlideViewHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView imageView;
+        private final LottieAnimationView lottieAnimationView;
         private final TextView titleTextView;
         private final TextView descriptionTextView;
 
         public IntroSlideViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.intro_image);
+            lottieAnimationView = itemView.findViewById(R.id.lottieAnimationView);
             titleTextView = itemView.findViewById(R.id.intro_title);
             descriptionTextView = itemView.findViewById(R.id.intro_description);
         }
 
         void bind(IntroSlide introSlide) {
-            imageView.setImageResource(introSlide.getImage());
+            lottieAnimationView.setAnimation(introSlide.getLottieFileName());
+            lottieAnimationView.playAnimation(); // 可选，触发播放
             titleTextView.setText(introSlide.getTitle());
             descriptionTextView.setText(introSlide.getDescription());
         }
