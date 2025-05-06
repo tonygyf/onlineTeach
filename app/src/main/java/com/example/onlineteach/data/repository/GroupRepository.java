@@ -39,6 +39,15 @@ public class GroupRepository {
     public LiveData<List<Group>> getGroupsForUser(int userId) {
         return groupDao.getGroupsForUser(userId);
     }
+    
+    /**
+     * 获取用户已加入的群组列表
+     * @param userId 用户ID
+     * @return 用户已加入的群组列表的LiveData对象
+     */
+    public LiveData<List<Group>> getJoinedGroups(int userId) {
+        return groupDao.getGroupsForUser(userId);
+    }
 
     public void createGroup(Group group, GroupOperationCallback callback) {
         executorService.execute(() -> {
