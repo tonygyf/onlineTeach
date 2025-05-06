@@ -2,3 +2,5 @@
 plugins {
     alias(libs.plugins.android.application) apply false
 }
+
+// 添加jitpack仓库支持

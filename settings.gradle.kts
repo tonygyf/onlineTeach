@@ -26,6 +26,9 @@ dependencyResolutionManagement {
         // 原始官方源作为兜底
         google()
         mavenCentral()
+
+        // 添加 JitPack 仓库支持
+        maven { url = uri("https://jitpack.io") }
     }
 }
 

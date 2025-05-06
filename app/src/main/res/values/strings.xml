@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">onlineTeach</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_dashboard">课程日历</string>
     <string name="title_notifications">我的群组</string>
     <string name="title_group_list">分组列表</string>
     <string name="title_personal">个人信息</string>

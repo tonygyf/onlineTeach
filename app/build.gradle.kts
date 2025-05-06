@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.onlineteach"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -53,5 +53,10 @@ dependencies {
     annotationProcessor(libs.room.compiler) // Room 编译器依赖（用于生成代码）
 //添加kts版本lottie依赖
     implementation("com.airbnb.android:lottie:6.1.0")
+    
+    // 添加Android-Week-View日历库
+    implementation("com.github.thellmund:Android-Week-View:5.2.4")
+    // ViewPager2用于滑动介绍
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 
 }
