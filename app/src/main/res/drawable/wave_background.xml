@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="120dp"
+    android:viewportWidth="360"
+    android:viewportHeight="240">
+
+    <!-- 蓝色波浪路径 -->
+    <path
+        android:fillColor="#4285F4"
+        android:pathData="M0,120
+                          C60,60 120,60 180,120
+                          C240,180 300,180 360,120
+                          L360,0
+                          L0,0
+                          Z" />
+</vector>
