@@ -2,6 +2,7 @@ package com.example.onlineteach;
 
 import android.animation.Animator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                // 动画播放结束后跳转
+                // 动画播放结束后直接跳转到登录页面
                 startActivity(new Intent(SplashActivity.this, AuthActivity.class));
                 finish();
             }

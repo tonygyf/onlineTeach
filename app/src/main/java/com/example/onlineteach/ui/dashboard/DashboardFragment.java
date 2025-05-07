@@ -29,8 +29,6 @@ import java.util.List;
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
-    private List<IntroSlide> introSlides;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,39 +38,13 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 设置ViewPager2滑动介绍
-        setupIntroSlides();
-        binding.introViewPager.setAdapter(new IntroSlideAdapter(introSlides));
-
         // 设置WeekView日历
         setupWeekView();
 
         return root;
     }
 
-    /**
-     * 设置介绍滑动页面
-     */
-    private void setupIntroSlides() {
-        introSlides = new ArrayList<>();
 
-        // 添加介绍页面
-        introSlides.add(new IntroSlide(
-                "lesson.json",
-                "在线教学平台",
-                "随时随地学习，提高学习效率"));
-
-        introSlides.add(new IntroSlide(
-                "student.json",
-                "丰富的课程资源",
-                "各类课程资源，满足不同学习需求"));
-
-        introSlides.add(new IntroSlide(
-                "teacher.json",
-                "实时互动交流",
-                "师生互动，小组讨论，提高学习体验"));
-
-    }
 
     /**
      * 设置周视图日历
@@ -139,7 +111,5 @@ public class DashboardFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-        // 清除资源
-        introSlides = null;
     }
 }
