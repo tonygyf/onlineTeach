@@ -25,6 +25,9 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         // 初始化 LottieLoadingDialog
 //        loadingDialog = new LottieLoadingDialog(this);
 
