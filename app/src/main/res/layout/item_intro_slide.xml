@@ -17,7 +17,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_fileName="default_animation.json" />
+         />
 
     <TextView
         android:id="@+id/intro_title"
