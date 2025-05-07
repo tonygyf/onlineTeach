@@ -20,6 +20,9 @@ public class Course {
 
     @ColumnInfo(name = "image_url")
     private String imageUrl;
+    
+    @ColumnInfo(name = "description")
+    private String description;
 
     // Getters and Setters
     public int getCourseId() {
@@ -60,5 +63,13 @@ public class Course {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

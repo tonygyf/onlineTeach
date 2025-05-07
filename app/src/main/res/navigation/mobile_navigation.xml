@@ -50,7 +50,17 @@
         android:id="@+id/navigation_course_list"
         android:name="com.example.onlineteach.ui.course.CourseListFragment"
         android:label="课程列表"
-        tools:layout="@layout/fragment_course_list" />
+        tools:layout="@layout/fragment_course_list">
+        <action
+            android:id="@+id/action_navigation_course_list_to_course_detail"
+            app:destination="@+id/navigation_course_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_course_detail"
+        android:name="com.example.onlineteach.ui.course.CourseDetailFragment"
+        android:label="课程详情"
+        tools:layout="@layout/fragment_course_detail" />
         
     <fragment
         android:id="@+id/navigation_bookshelf"

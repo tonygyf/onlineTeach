@@ -8,11 +8,13 @@ import androidx.annotation.NonNull;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.onlineteach.data.dao.BookDao;
+import com.example.onlineteach.data.dao.EnrollmentDao;
 import com.example.onlineteach.data.dao.UserDao;
 import com.example.onlineteach.data.dao.GroupDao;
 import com.example.onlineteach.data.dao.CourseDao;
 
 import com.example.onlineteach.data.model.Book;
+import com.example.onlineteach.data.model.Enrollment;
 import com.example.onlineteach.data.model.User;
 import com.example.onlineteach.data.model.Group;
 import com.example.onlineteach.data.model.GroupMember;
@@ -29,13 +31,14 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Course.class, Book.class, Group.class, GroupMember.class, GroupMessage.class}, version = 3, exportSchema = false)
+@Database(entities = {User.class, Course.class, Book.class, Group.class, GroupMember.class, GroupMessage.class, Enrollment.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();
     public abstract BookDao bookDao();
     public abstract GroupDao groupDao();
+    public abstract EnrollmentDao enrollmentDao();
 
     private static volatile AppDatabase INSTANCE;
     private static Context appContext;
@@ -88,18 +91,21 @@ public abstract class AppDatabase extends RoomDatabase {
                 course1.setCredits(1.0f);
                 course1.setTeacher("教发老师");
                 course1.setImageUrl("@drawable/courselist");
+                course1.setDescription("本课程旨在提升教师的语言表达能力，包括课堂用语、教学语言组织、语言技巧等内容，帮助教师更有效地进行课堂教学。");
 
                 Course course2 = new Course();
                 course2.setTitle("教学准备五件事");
                 course2.setCredits(1.0f);
                 course2.setTeacher("教发老师");
                 course2.setImageUrl("@drawable/courselist");
+                course2.setDescription("本课程介绍教学准备的五个关键环节，包括教学大纲制定、教材选择、课件准备、教学活动设计和考核方式设计等内容。");
 
                 Course course3 = new Course();
                 course3.setTitle("在线教学设计与实施");
                 course3.setCredits(1.5f);
                 course3.setTeacher("技术支持中心");
                 course3.setImageUrl("@drawable/courselist");
+                course3.setDescription("本课程介绍在线教学的设计原则和实施方法，包括在线教学平台使用、在线教学资源制作、在线教学活动组织和在线教学评价等内容。");
 
                 courseList.add(course1);
                 courseList.add(course2);

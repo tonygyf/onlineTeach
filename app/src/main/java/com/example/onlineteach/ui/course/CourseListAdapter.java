@@ -21,6 +21,17 @@ import java.util.List;
 public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.CourseViewHolder> {
 
     private List<Course> courses = new ArrayList<>();
+    private OnCourseClickListener onCourseClickListener;
+    
+    // 定义课程点击事件监听器接口
+    public interface OnCourseClickListener {
+        void onCourseClick(Course course);
+    }
+    
+    // 设置课程点击事件监听器
+    public void setOnCourseClickListener(OnCourseClickListener listener) {
+        this.onCourseClickListener = listener;
+    }
 
     @NonNull
     @Override
@@ -34,6 +45,13 @@ public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.Co
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
         Course course = courses.get(position);
         holder.bind(course);
+        
+        // 设置整个课程项的点击事件
+        holder.itemView.setOnClickListener(v -> {
+            if (onCourseClickListener != null) {
+                onCourseClickListener.onCourseClick(course);
+            }
+        });
     }
 
     @Override

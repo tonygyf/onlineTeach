@@ -38,6 +38,26 @@ public class CourseRepository {
     }
 
     /**
+     * 根据ID获取课程详情
+     * 
+     * @param courseId 课程ID
+     * @return LiveData<Course> 课程详情的LiveData对象
+     */
+    public LiveData<Course> getCourseById(int courseId) {
+        return courseDao.getCourseByIdLiveData(courseId);
+    }
+    
+    /**
+     * 同步获取课程详情（需要在后台线程中调用）
+     * 
+     * @param courseId 课程ID
+     * @return Course 课程对象
+     */
+    public Course getCourseByIdSync(int courseId) {
+        return courseDao.getCourseById(courseId);
+    }
+
+    /**
      * Inserts a single course into the database on a background thread.
      *
      * @param course The course to insert.
