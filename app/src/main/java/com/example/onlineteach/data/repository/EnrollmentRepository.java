@@ -39,6 +39,13 @@ public class EnrollmentRepository {
     }
 
     public boolean isEnrolled(int userId, int courseId) {
-        return enrollmentDao.isEnrolled(userId, courseId);
+        try {
+            return AppDatabase.databaseWriteExecutor.submit(() -> 
+                enrollmentDao.isEnrolled(userId, courseId)
+            ).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
