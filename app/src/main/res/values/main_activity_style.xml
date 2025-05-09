@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MainActivity专用主题，ActionBar为白色 -->
+    <style name="Theme.OnlineTeach.WhiteActionBar" parent="Theme.OnlineTeach">
+        <!-- 设置ActionBar背景颜色为白色 -->
+        <item name="actionBarStyle">@style/WhiteActionBar</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorControlNormal">@color/black</item>
+    </style>
+    
+    <style name="WhiteActionBar" parent="Widget.MaterialComponents.ActionBar.Primary">
+        <item name="background">@color/white</item>
+        <item name="titleTextColor">@color/black</item>
+        <item name="colorControlNormal">@color/black</item>
+    </style>
+</resources>
