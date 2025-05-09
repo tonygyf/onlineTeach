@@ -1,6 +1,5 @@
 package com.example.onlineteach.ui.dashboard;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,84 +9,40 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.alamkanak.weekview.WeekView;
-import com.alamkanak.weekview.WeekViewEntity;
 import com.example.onlineteach.R;
 import com.example.onlineteach.databinding.FragmentDashboardBinding;
-import com.example.onlineteach.utils.DateTimeUtils;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
+    private DashboardViewModel dashboardViewModel;
+    private EnrolledCoursesAdapter enrolledCoursesAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
 
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 设置WeekView日历
-        setupWeekView();
+        setupRecyclerView();
+        observeEnrolledCourses();
 
         return root;
     }
 
-
-
-    /**
-     * 设置周视图日历
-     */
-    private void setupWeekView() {
-        WeekView weekView = binding.weekView;
-
-        weekView.setAdapter(new WeekView.SimpleAdapter() {
-            @NonNull
-
-            public List<WeekViewEntity> onLoad(@NonNull LocalDateTime start, @NonNull LocalDateTime end) {
-                List<WeekViewEntity> events = new ArrayList<>();
-                LocalDate today = LocalDate.now();
-
-                // 添加一些示例课程
-                addEvent(events, today, 9, 0, 10, 30, "Java编程基础", Color.parseColor("#FF4081"));
-                addEvent(events, today, 13, 0, 14, 30, "Android开发入门", Color.parseColor("#3F51B5"));
-                addEvent(events, today.plusDays(1), 10, 0, 11, 30, "数据结构与算法", Color.parseColor("#009688"));
-                addEvent(events, today.plusDays(2), 14, 0, 16, 0, "网络编程实践", Color.parseColor("#FF9800"));
-
-                return events;
-            }
-        });
+    private void setupRecyclerView() {
+        enrolledCoursesAdapter = new EnrolledCoursesAdapter();
+        binding.recyclerViewEnrolledCourses.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.recyclerViewEnrolledCourses.setAdapter(enrolledCoursesAdapter);
     }
-    /**
-     * 添加日历事件
-     */
-    private void addEvent(List<WeekViewEntity> events, LocalDate date, int startHour, int startMinute,
-                          int endHour, int endMinute, String title, int color) {
-        LocalDateTime startTime = LocalDateTime.of(date, LocalTime.of(startHour, startMinute));
-        LocalDateTime endTime = LocalDateTime.of(date, LocalTime.of(endHour, endMinute));
 
-        int eventId = events.size() + 1;
-
-        WeekViewEntity event = new WeekViewEntity.Event.Builder<>(
-                eventId
-
-        )
-                .setTitle(title)
-
-                .build();
-
-        events.add(event);
+    private void observeEnrolledCourses() {
+        dashboardViewModel.getEnrolledCourses().observe(getViewLifecycleOwner(), enrollments -> {
+            enrolledCoursesAdapter.setEnrollments(enrollments);
+        });
     }
 
 

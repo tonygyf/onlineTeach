@@ -4,31 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".ui.dashboard.DashboardFragment">
 
     <TextView
-        android:id="@+id/calendar_title"
-        android:layout_width="match_parent"
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="课程日历"
-        android:textSize="18sp"
+        android:text="已选课程"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.alamkanak.weekview.WeekView
-        android:id="@+id/weekView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewEnrolledCourses"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/calendar_title"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:weekViewType="dayView" />
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
