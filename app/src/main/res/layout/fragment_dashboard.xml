@@ -7,6 +7,14 @@
     android:padding="16dp"
     tools:context=".ui.dashboard.DashboardFragment">
 
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
@@ -14,8 +22,9 @@
         android:text="已选课程"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/calendarView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEnrolledCourses"

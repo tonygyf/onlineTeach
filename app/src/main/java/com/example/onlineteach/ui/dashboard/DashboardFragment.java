@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,6 +20,7 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
     private DashboardViewModel dashboardViewModel;
     private EnrolledCoursesAdapter enrolledCoursesAdapter;
+    private AlertDialog planningDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -28,6 +30,7 @@ public class DashboardFragment extends Fragment {
         View root = binding.getRoot();
 
         setupRecyclerView();
+        setupCalendarView();
         observeEnrolledCourses();
 
         return root;
@@ -45,6 +48,28 @@ public class DashboardFragment extends Fragment {
         });
     }
 
+
+    private void setupCalendarView() {
+        binding.calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+            showPlanningDialog(year, month, dayOfMonth);
+        });
+    }
+
+    private void showPlanningDialog(int year, int month, int dayOfMonth) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("课程规划")
+                .setMessage(String.format("%d年%d月%d日的课程安排", year, month + 1, dayOfMonth))
+                .setPositiveButton("添加课程", (dialog, which) -> {
+                    // TODO: 实现添加课程的逻辑
+                })
+                .setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+
+        if (planningDialog != null && planningDialog.isShowing()) {
+            planningDialog.dismiss();
+        }
+        planningDialog = builder.create();
+        planningDialog.show();
+    }
 
     @Override
     public void onResume() {
