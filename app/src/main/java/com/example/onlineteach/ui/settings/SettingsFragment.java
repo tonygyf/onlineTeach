@@ -26,13 +26,26 @@ public class SettingsFragment extends Fragment {
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 设置主题切换开关的初始状态和监听器
-        settingsViewModel.getIsDarkMode().observe(getViewLifecycleOwner(), isDarkMode -> {
-            binding.switchTheme.setChecked(isDarkMode);
+        // 设置主题切换开关的初始状态
+        settingsViewModel.getIsLightMode().observe(getViewLifecycleOwner(), isLight -> {
+            binding.switchLightTheme.setChecked(isLight);
+            binding.switchDarkTheme.setChecked(!isLight);
         });
 
-        binding.switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            settingsViewModel.setDarkMode(isChecked);
+        // 浅色主题开关监听器
+        binding.switchLightTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                binding.switchDarkTheme.setChecked(false);
+                settingsViewModel.setLightMode(true);
+            }
+        });
+
+        // 深色主题开关监听器
+        binding.switchDarkTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                binding.switchLightTheme.setChecked(false);
+                settingsViewModel.setLightMode(false);
+            }
         });
 
         return root;
