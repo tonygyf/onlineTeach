@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_group_list"
             app:destination="@id/navigation_group_list" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
     </fragment>
 
     <fragment
@@ -46,6 +49,12 @@
         android:name="com.example.onlineteach.ui.personalinfo.PersonalInfoFragment"
         android:label="@string/title_personal"
         tools:layout="@layout/fragment_personal_info" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.onlineteach.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/navigation_course_list"
         android:name="com.example.onlineteach.ui.course.CourseListFragment"

@@ -47,8 +47,10 @@ public class HomeFragment extends Fragment implements MenuAdapter.OnItemClickLis
         } else if (position == 4) { // 书架菜单项
             Navigation.findNavController(requireView())
                     .navigate(R.id.action_navigation_home_to_navigation_bookshelf);
+        } else if (position == 5) { // 设置菜单项
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.action_navigation_home_to_navigation_settings);
         }
-        // 其他菜单项的点击处理可以在这里添加
     }
 
     @Override

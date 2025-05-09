@@ -8,4 +8,6 @@
     <string name="title_bookshelf">我的书架</string>
     <string name="menu_item_icon_description">菜单项图标</string>
     <string name="navigate_arrow_description">导航箭头</string>
+    <string name="title_settings">设置</string>
+    <string name="dark_mode">深色模式</string>
 </resources>
