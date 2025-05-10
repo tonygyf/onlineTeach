@@ -75,13 +75,17 @@ public class MemoAdapter extends ListAdapter<Memo, MemoAdapter.MemoViewHolder> {
             binding.memoContent.setText(memo.getContent());
             binding.memoDate.setText(dateFormat.format(new Date(memo.getReminderTime())));
             binding.reminderIcon.setVisibility(memo.getReminderTime() > 0 ? View.VISIBLE : View.GONE);
+            binding.memoCheckbox.setChecked(memo.isCompleted());
 
             itemView.setOnClickListener(v -> listener.onMemoClick(memo));
             binding.getRoot().setOnClickListener(v -> listener.onMemoClick(memo));
+            binding.memoCheckbox.setOnClickListener(v -> {
+                boolean isChecked = binding.memoCheckbox.isChecked();
+                listener.onMemoCheckChanged(memo, isChecked);
+            });
             binding.reminderIcon.setOnClickListener(v -> {
                 boolean newState = !memo.isCompleted();
                 listener.onMemoCheckChanged(memo, newState);
-            });
+            });}
         }
-    }
 }

@@ -26,12 +26,31 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/completion_animation_view"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:visibility="gone"
             app:lottie_autoPlay="false"
+            app:lottie_loop="false"
             app:lottie_fileName="finish.json" />
+            
+        <!-- 使用match_parent并设置margin来确保动画在屏幕上有足够的空间显示 -->
+        <FrameLayout
+            android:id="@+id/animation_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/fullscreen_animation_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                app:lottie_autoPlay="false"
+                app:lottie_loop="false"
+                app:lottie_fileName="finish.json" />
+        </FrameLayout>
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

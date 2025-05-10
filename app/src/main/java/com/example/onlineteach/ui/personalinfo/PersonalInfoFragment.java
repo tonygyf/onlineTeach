@@ -4,13 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+
+import com.airbnb.lottie.LottieAnimationView;
+import com.example.onlineteach.AuthActivity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -121,6 +128,61 @@ public class PersonalInfoFragment extends Fragment {
                 break;
             case 3: // 退出账户
                 mViewModel.logout();
+                // 显示退出动画
+                LottieAnimationView exitAnimationView = new LottieAnimationView(requireContext());
+                exitAnimationView.setAnimation("exit.json");
+                exitAnimationView.setVisibility(View.VISIBLE);
+                exitAnimationView.playAnimation();
+                
+                // 将动画视图添加到当前布局
+                FrameLayout container = new FrameLayout(requireContext());
+                container.setLayoutParams(new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+                container.setBackgroundColor(Color.WHITE);
+                container.addView(exitAnimationView);
+                
+                // 设置动画视图的布局参数 - 使用较大的固定尺寸
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT);
+                params.gravity = Gravity.CENTER;
+                // 设置边距，保持一定的边界空间
+                int margin = (int) (getResources().getDisplayMetrics().density * 20);
+                params.setMargins(margin, margin, margin, margin);
+                exitAnimationView.setLayoutParams(params);
+                
+                // 将动画容器添加到当前视图
+                ViewGroup rootView = (ViewGroup) requireActivity().getWindow().getDecorView().findViewById(android.R.id.content);
+                rootView.addView(container);
+                
+                // 添加动画监听器，动画结束后跳转到AuthActivity
+                exitAnimationView.addAnimatorListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {}
+                    
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        // 动画结束后跳转到AuthActivity
+                        Intent intent = new Intent(requireActivity(), AuthActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    }
+                    
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        // 如果动画被取消，也执行跳转
+                        Intent intent = new Intent(requireActivity(), AuthActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    }
+                    
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {}
+                });
+                
                 ToastUtils.showShortToast(requireContext(), "已退出登录");
                 break;
         }

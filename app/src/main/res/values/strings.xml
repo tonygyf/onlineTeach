@@ -17,4 +17,5 @@
     <string name="set_reminder">设置提醒</string>
     <string name="add_memo">增加待办</string>
     <string name="no_memos">暂时没有待办</string>
+    <string name="mark_as_completed">标记为已完成</string>
 </resources>
