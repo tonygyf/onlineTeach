@@ -11,4 +11,10 @@
     <string name="title_settings">设置</string>
     <string name="dark_mode">深色模式</string>
     <string name="light_mode">浅色模式</string>
+    <string name="memo_content">待办事项内容</string>
+    <string name="memo_title">待办事项标题</string>
+    <string name="save">保存</string>
+    <string name="set_reminder">设置提醒</string>
+    <string name="add_memo">增加待办</string>
+    <string name="no_memos">暂时没有待办</string>
 </resources>

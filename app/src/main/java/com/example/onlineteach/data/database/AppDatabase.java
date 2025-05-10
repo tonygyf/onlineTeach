@@ -12,6 +12,7 @@ import com.example.onlineteach.data.dao.EnrollmentDao;
 import com.example.onlineteach.data.dao.UserDao;
 import com.example.onlineteach.data.dao.GroupDao;
 import com.example.onlineteach.data.dao.CourseDao;
+import com.example.onlineteach.data.dao.MemoDao; // ✅ 新增导入
 
 import com.example.onlineteach.data.model.Book;
 import com.example.onlineteach.data.model.Enrollment;
@@ -20,6 +21,7 @@ import com.example.onlineteach.data.model.Group;
 import com.example.onlineteach.data.model.GroupMember;
 import com.example.onlineteach.data.model.GroupMessage;
 import com.example.onlineteach.data.model.Course;
+import com.example.onlineteach.data.model.Memo; // ✅ 新增导入
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,7 +33,20 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Course.class, Book.class, Group.class, GroupMember.class, GroupMessage.class, Enrollment.class}, version = 4, exportSchema = false)
+@Database(
+        entities = {
+                User.class,
+                Course.class,
+                Book.class,
+                Group.class,
+                GroupMember.class,
+                GroupMessage.class,
+                Enrollment.class,
+                Memo.class // ✅ 添加 Memo 实体
+        },
+        version = 4,
+        exportSchema = false
+)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UserDao userDao();
@@ -39,6 +54,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract BookDao bookDao();
     public abstract GroupDao groupDao();
     public abstract EnrollmentDao enrollmentDao();
+    public abstract MemoDao memoDao(); // ✅ 添加 MemoDao
 
     private static volatile AppDatabase INSTANCE;
     private static Context appContext;
@@ -76,14 +92,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 BookDao bookDao = INSTANCE.bookDao();
                 GroupDao groupDao = INSTANCE.groupDao();
 
-                // ✅ 初始化默认用户
-//                User defaultUser = new User();
-//                defaultUser.setUsername("admin");
-//                defaultUser.setEmail("admin@example.com");
-//                defaultUser.setPassword("password"); // 明文仅限测试
-//                userDao.insertUser(defaultUser); // 该用户将获得 ID = 1
-
-                // ✅ 初始化课程
+                // 示例课程
                 List<Course> courseList = new ArrayList<>();
 
                 Course course1 = new Course();
@@ -91,21 +100,21 @@ public abstract class AppDatabase extends RoomDatabase {
                 course1.setCredits(1.0f);
                 course1.setTeacher("教发老师");
                 course1.setImageUrl("@drawable/courselist");
-                course1.setDescription("本课程旨在提升教师的语言表达能力，包括课堂用语、教学语言组织、语言技巧等内容，帮助教师更有效地进行课堂教学。");
+                course1.setDescription("本课程旨在提升教师的语言表达能力...");
 
                 Course course2 = new Course();
                 course2.setTitle("教学准备五件事");
                 course2.setCredits(1.0f);
                 course2.setTeacher("教发老师");
                 course2.setImageUrl("@drawable/courselist");
-                course2.setDescription("本课程介绍教学准备的五个关键环节，包括教学大纲制定、教材选择、课件准备、教学活动设计和考核方式设计等内容。");
+                course2.setDescription("本课程介绍教学准备的五个关键环节...");
 
                 Course course3 = new Course();
                 course3.setTitle("在线教学设计与实施");
                 course3.setCredits(1.5f);
                 course3.setTeacher("技术支持中心");
                 course3.setImageUrl("@drawable/courselist");
-                course3.setDescription("本课程介绍在线教学的设计原则和实施方法，包括在线教学平台使用、在线教学资源制作、在线教学活动组织和在线教学评价等内容。");
+                course3.setDescription("本课程介绍在线教学的设计原则...");
 
                 courseList.add(course1);
                 courseList.add(course2);
@@ -113,14 +122,12 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 courseDao.insertAll(courseList);
 
-                // ✅ 初始化图书
+                // 示例图书
                 try {
                     String fileName = "sample_book.txt";
                     InputStream inputStream = appContext.getAssets().open(fileName);
                     File privateDir = new File(appContext.getFilesDir(), "books");
-                    if (!privateDir.exists()) {
-                        privateDir.mkdirs();
-                    }
+                    if (!privateDir.exists()) privateDir.mkdirs();
                     File outputFile = new File(privateDir, fileName);
 
                     FileOutputStream outputStream = new FileOutputStream(outputFile);
@@ -145,30 +152,28 @@ public abstract class AppDatabase extends RoomDatabase {
                     e.printStackTrace();
                 }
 
-                // ✅ 初始化群组
+                // 示例群组
                 Group group = new Group();
                 group.setName("教学交流群");
                 group.setDescription("用于教学经验交流");
-                group.setCreatorId(1); // 设置创建者ID为默认用户
-                group.setCreateTime(System.currentTimeMillis()); // 设置创建时间
-                group.setMemberCount(1); // 设置成员数量
+                group.setCreatorId(1);
+                group.setCreateTime(System.currentTimeMillis());
+                group.setMemberCount(1);
                 long groupId = groupDao.insertGroup(group);
 
-                // ✅ 初始化群成员
                 GroupMember member = new GroupMember();
-                member.setGroupId((int)groupId);
-                member.setUserId(1); // 假设用户ID 1
-                member.setJoinTime(System.currentTimeMillis()); // 设置加入时间
-                member.setAdmin(true); // 设置为管理员
+                member.setGroupId((int) groupId);
+                member.setUserId(1);
+                member.setJoinTime(System.currentTimeMillis());
+                member.setAdmin(true);
                 groupDao.insertGroupMember(member);
 
-                // ✅ 初始化群消息
                 GroupMessage message = new GroupMessage();
-                message.setGroupId((int)groupId);
-                message.setSenderId(1); // 同样假设用户ID 1
+                message.setGroupId((int) groupId);
+                message.setSenderId(1);
                 message.setContent("欢迎加入教学交流群！");
-                message.setSendTime(System.currentTimeMillis()); // 设置发送时间
-                message.setMessageType(0); // 设置消息类型为文本
+                message.setSendTime(System.currentTimeMillis());
+                message.setMessageType(0);
                 groupDao.insertGroupMessage(message);
             });
         }

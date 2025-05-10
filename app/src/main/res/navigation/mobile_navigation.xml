@@ -26,6 +26,9 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_settings"
             app:destination="@id/navigation_settings" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_memo_list"
+            app:destination="@id/navigation_memo_list" />
     </fragment>
 
     <fragment
@@ -94,6 +97,31 @@
         tools:layout="@layout/fragment_group_chat">
         <argument
             android:name="group_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_memo_list"
+        android:name="com.example.onlineteach.ui.memo.MemoListFragment"
+        android:label="备忘录"
+        tools:layout="@layout/fragment_memo_list">
+        <action
+            android:id="@+id/action_navigation_memo_list_to_memo_edit"
+            app:destination="@id/navigation_memo_edit"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_memo_edit"
+        android:name="com.example.onlineteach.ui.memo.MemoEditFragment"
+        android:label="编辑备忘录"
+        tools:layout="@layout/fragment_memo_edit">
+        <argument
+            android:name="memo_id"
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
