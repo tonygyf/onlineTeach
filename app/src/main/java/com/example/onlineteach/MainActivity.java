@@ -21,6 +21,7 @@ import com.example.onlineteach.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private boolean isBackgroundRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        
+        // 检查悬浮窗权限
+        checkFloatingPermission();
     }
     
     @Override
@@ -70,5 +74,54 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         return navController.navigateUp() || super.onSupportNavigateUp();
+    }
+    
+    /**
+     * 检查悬浮窗权限
+     */
+    private void checkFloatingPermission() {
+        if (!com.example.onlineteach.service.FloatingAssistantService.canDrawOverlays(this)) {
+            // 没有权限，请求权限
+            com.example.onlineteach.service.FloatingAssistantService.requestOverlayPermission(this);
+        }
+    }
+    
+    /**
+     * 启动悬浮球服务
+     */
+    private void startFloatingService() {
+        if (com.example.onlineteach.service.FloatingAssistantService.canDrawOverlays(this)) {
+            Intent intent = new Intent(this, com.example.onlineteach.service.FloatingAssistantService.class);
+            startService(intent);
+            isBackgroundRunning = true;
+        } else {
+            Toast.makeText(this, "需要悬浮窗权限才能启动悬浮球", Toast.LENGTH_SHORT).show();
+            checkFloatingPermission();
+        }
+    }
+    
+    /**
+     * 停止悬浮球服务
+     */
+    private void stopFloatingService() {
+        if (isBackgroundRunning) {
+            Intent intent = new Intent(this, com.example.onlineteach.service.FloatingAssistantService.class);
+            stopService(intent);
+            isBackgroundRunning = false;
+        }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 当应用进入后台时启动悬浮球
+        startFloatingService();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 当应用回到前台时停止悬浮球
+        stopFloatingService();
     }
 }

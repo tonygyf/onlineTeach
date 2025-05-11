@@ -4,6 +4,8 @@
 
     <!-- 读取外部存储权限，用于选择头像图片 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 悬浮窗权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -49,6 +51,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        
+        <!-- 悬浮球助手服务 -->
+        <service
+            android:name=".service.FloatingAssistantService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
