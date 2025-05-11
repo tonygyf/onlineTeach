@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,7 +30,10 @@ public class FloatingAssistantService extends Service {
 
     private WindowManager windowManager;
     private View floatingView;
+    private View menuView;
     private WindowManager.LayoutParams params;
+    private WindowManager.LayoutParams menuParams;
+    private boolean isMenuVisible = false;
     
     // 记录触摸点相对于悬浮球的偏移量
     private float touchX, touchY;
@@ -105,22 +109,117 @@ public class FloatingAssistantService extends Service {
                         
                         // 更新悬浮球位置
                         windowManager.updateViewLayout(floatingView, params);
+                        
+                        // 如果菜单可见，则隐藏菜单
+                        if (isMenuVisible) {
+                            hideMenu();
+                        }
                         return true;
                         
                     case MotionEvent.ACTION_UP:
                         // 如果移动距离很小，视为点击
                         if (Math.abs(event.getRawX() - touchX) < 10 && 
                             Math.abs(event.getRawY() - touchY) < 10) {
-                            // 点击事件，打开主应用
-                            Intent intent = new Intent(FloatingAssistantService.this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                            // 点击事件，显示或隐藏菜单
+                            toggleMenu();
                         }
                         return true;
                 }
                 return false;
             }
         });
+    }
+    
+    /**
+     * 显示或隐藏菜单
+     */
+    private void toggleMenu() {
+        if (isMenuVisible) {
+            hideMenu();
+        } else {
+            showMenu();
+        }
+    }
+    
+    /**
+     * 显示菜单
+     */
+    private void showMenu() {
+        if (menuView == null) {
+            // 初始化菜单视图
+            menuView = LayoutInflater.from(this).inflate(R.layout.layout_floating_menu, null);
+            
+            // 设置菜单项点击事件
+            TextView voiceAssistantItem = menuView.findViewById(R.id.menu_voice_assistant);
+            TextView pageAnalysisItem = menuView.findViewById(R.id.menu_page_analysis);
+            
+            voiceAssistantItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // AI语音助手功能（暂未实现）
+                    ToastUtils.showToast(getApplicationContext(), "AI语音助手功能即将上线", Toast.LENGTH_SHORT);
+                    hideMenu();
+                }
+            });
+            
+            pageAnalysisItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // AI页面分析功能（暂未实现）
+                    ToastUtils.showToast(getApplicationContext(), "AI页面分析功能即将上线", Toast.LENGTH_SHORT);
+                    hideMenu();
+                }
+            });
+            
+            // 设置菜单布局参数
+            menuParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    getWindowLayoutType(),
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                    PixelFormat.TRANSLUCENT);
+            
+            // 菜单位置与悬浮球相邻
+            menuParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+            menuParams.x = params.x + 70; // 向左偏移
+            menuParams.y = params.y;
+            
+            // 添加点击外部区域隐藏菜单的触摸监听器
+            menuView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    // 点击菜单区域外隐藏菜单
+                    if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                        hideMenu();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
+        
+        try {
+            windowManager.addView(menuView, menuParams);
+            isMenuVisible = true;
+        } catch (Exception e) {
+            // 防止重复添加视图
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * 隐藏菜单
+     */
+    private void hideMenu() {
+        if (menuView != null && isMenuVisible) {
+            try {
+                windowManager.removeView(menuView);
+            } catch (Exception e) {
+                // 防止视图已经被移除
+                e.printStackTrace();
+            }
+            isMenuVisible = false;
+        }
     }
     
     @Nullable
@@ -132,6 +231,9 @@ public class FloatingAssistantService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (isMenuVisible) {
+            hideMenu();
+        }
         if (floatingView != null && windowManager != null) {
             windowManager.removeView(floatingView);
         }
