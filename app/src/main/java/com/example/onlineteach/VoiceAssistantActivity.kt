@@ -66,7 +66,7 @@ class VoiceAssistantActivity : AppCompatActivity() {
         val apiKey = "AIzaSyDMkxnpZG5N5WyT0y4sbjII_M65oR-Eh5c"
         
         generativeModel = GenerativeModel(
-            modelName = "Gemini 2.0 Flash", // 使用新的模型名称
+            modelName = "gemini-2.0-flash", // 使用正确的模型名称
             apiKey = apiKey
             // You can also add generationConfig, safetySettings etc. here if needed
             // generationConfig = GenerationConfig(...)
