@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-
 }
 
 android {
@@ -27,19 +26,19 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17 // 使用 Java 17
+        targetCompatibility = JavaVersion.VERSION_17 // 使用 Java 17
     }
+
     buildFeatures {
         viewBinding = true
-//        添加databinding
         dataBinding = true
     }
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
@@ -53,14 +52,18 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.room.runtime) // Room 运行时依赖
     annotationProcessor(libs.room.compiler) // Room 编译器依赖（用于生成代码）
-//添加kts版本lottie依赖
-    implementation("com.airbnb.android:lottie:6.1.0")
-    
-    // 添加Android-Week-View日历库
-    implementation("com.github.thellmund:Android-Week-View:5.2.4")
-    // ViewPager2用于滑动介绍
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-//    kotlin
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation("com.airbnb.android:lottie:6.1.0") // KTS版本lottie依赖
+    implementation("com.github.thellmund:Android-Week-View:5.2.4") // 日历库
+    implementation("androidx.viewpager2:viewpager2:1.0.0") // ViewPager2依赖
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.1.0") // Kotlin依赖
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    implementation ("androidx.concurrent:concurrent-futures:1.1.0")
+    implementation ("com.google.guava:guava:33.3.1-android") // 或更新的版本
+}
 
+// 更新 JVM 工具链为 Java 17
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17)) // 设置为 Java 17
+    }
 }
