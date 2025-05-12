@@ -57,6 +57,12 @@
             android:name=".service.FloatingAssistantService"
             android:enabled="true"
             android:exported="false" />
+            
+        <!-- AI语音助手Activity -->
+        <activity
+            android:name=".VoiceAssistantActivity"
+            android:exported="false"
+            android:label="AI语音助手" />
     </application>
 
 </manifest>

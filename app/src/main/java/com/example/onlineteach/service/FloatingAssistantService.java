@@ -156,8 +156,10 @@ public class FloatingAssistantService extends Service {
             voiceAssistantItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // AI语音助手功能（暂未实现）
-                    ToastUtils.showToast(getApplicationContext(), "AI语音助手功能即将上线", Toast.LENGTH_SHORT);
+                    // 启动AI语音助手Activity
+                    Intent intent = new Intent(getApplicationContext(), com.example.onlineteach.VoiceAssistantActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     hideMenu();
                 }
             });
