@@ -42,6 +42,14 @@
             android:background="@android:drawable/editbox_background" />
 
         <ImageButton
+            android:id="@+id/mic_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:src="@android:drawable/ic_btn_speak_now"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+        <ImageButton
             android:id="@+id/send_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
