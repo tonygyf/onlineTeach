@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/toast_background"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/menu_voice_assistant"
@@ -13,11 +13,12 @@
         android:clickable="true"
         android:focusable="true"
         android:background="@drawable/menu_item_background"
-        android:drawablePadding="8dp"
-        android:padding="12dp"
+        android:drawablePadding="4dp"
+        android:padding="8dp"
         android:text="AI语音助手"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:minWidth="120dp"
+        android:textSize="14sp" />
 
     <View
         android:layout_width="match_parent"
@@ -31,10 +32,11 @@
         android:clickable="true"
         android:focusable="true"
         android:background="@drawable/menu_item_background"
-        android:drawablePadding="8dp"
-        android:padding="12dp"
+        android:drawablePadding="4dp"
+        android:padding="8dp"
         android:text="AI页面分析"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:minWidth="120dp"
+        android:textSize="14sp" />
 
 </LinearLayout>

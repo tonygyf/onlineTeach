@@ -63,33 +63,19 @@ class VoiceAssistantActivity : AppCompatActivity() {
     }
 
     private fun initGeminiApi() {
-        val apiKey = getApiKeyFromProperties()
-        if (apiKey.isNullOrEmpty()) {
-            Toast.makeText(this, "API Key not found. Please configure it.", Toast.LENGTH_LONG).show()
-            Log.e("VoiceAssistant", "API Key not found!")
-            return
-        }
-
+        val apiKey = "AIzaSyDMkxnpZG5N5WyT0y4sbjII_M65oR-Eh5c"
+        
         generativeModel = GenerativeModel(
-            modelName = "gemini-pro", // or the model you intend to use
+            modelName = "Gemini 2.0 Flash", // 使用新的模型名称
             apiKey = apiKey
             // You can also add generationConfig, safetySettings etc. here if needed
             // generationConfig = GenerationConfig(...)
         )
     }
 
-    private fun getApiKeyFromProperties(): String? {
-        val properties = Properties()
-        try {
-            assets.open("local.properties").use { inputStream: InputStream ->
-                properties.load(inputStream)
-            }
-            return properties.getProperty("gemini.api.key")
-        } catch (e: IOException) {
-            Log.e("VoiceAssistant", "Could not read local.properties", e)
-            return null
-        }
-    }
+    // 不再需要从properties文件读取API密钥
+    // 已在initGeminiApi方法中直接使用硬编码的API密钥
+
 
     private fun setupClickListeners() {
         sendButton.setOnClickListener {
