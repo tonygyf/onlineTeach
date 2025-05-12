@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+
 }
 
 android {
@@ -58,5 +60,7 @@ dependencies {
     implementation("com.github.thellmund:Android-Week-View:5.2.4")
     // ViewPager2用于滑动介绍
     implementation("androidx.viewpager2:viewpager2:1.0.0")
+//    kotlin
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
 
 }
