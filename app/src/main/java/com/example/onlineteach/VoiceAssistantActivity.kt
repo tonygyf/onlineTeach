@@ -8,14 +8,16 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.speech.tts.TextToSpeech.OnInitListener
 import android.speech.tts.UtteranceProgressListener
+
 import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
-import android.view.View // Make sure this import is present if not already.
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -23,8 +25,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
-import com.example.onlineteach.data.model.ChatMessage // Assuming this is your model
-import com.example.onlineteach.ui.ai.ChatMessageAdapter // Assuming this is your adapter
+import com.example.onlineteach.data.model.ChatMessage
+import com.example.onlineteach.ui.ai.ChatMessageAdapter
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.Content
 import com.google.ai.client.generativeai.type.GenerateContentResponse
@@ -38,7 +40,7 @@ import java.net.UnknownHostException
 import java.util.Locale
 import java.util.Properties
 
-class VoiceAssistantActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+class VoiceAssistantActivity : AppCompatActivity() {
 
     private lateinit var chatRecyclerView: RecyclerView
     private lateinit var inputEditText: EditText
@@ -53,8 +55,7 @@ class VoiceAssistantActivity : AppCompatActivity(), TextToSpeech.OnInitListener 
     private lateinit var speechRecognizer: SpeechRecognizer
     private val RECORD_AUDIO_REQUEST_CODE = 101
 
-    private lateinit var textToSpeech: TextToSpeech
-    private var isTtsReady = false
+    private lateinit var ttsHelper: TTSHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,10 +66,24 @@ class VoiceAssistantActivity : AppCompatActivity(), TextToSpeech.OnInitListener 
         setupClickListeners()
 
         checkPermission()
-
         initSpeechRecognizer()
 
-        textToSpeech = TextToSpeech(this, this)
+        // 初始化TTS
+        initTTS()
+    }
+
+    private fun initTTS() {
+        ttsHelper = TTSHelper(this)
+        ttsHelper.setOnInitCallback { success ->
+            if (success) {
+                Log.d("VoiceAssistant", "TTS初始化成功")
+                // 测试TTS
+                ttsHelper.speak("TTS测试")
+            } else {
+                Log.e("VoiceAssistant", "TTS初始化失败")
+                Toast.makeText(this, "TTS初始化失败，请检查系统TTS设置", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun initViews() {
@@ -227,50 +242,25 @@ class VoiceAssistantActivity : AppCompatActivity(), TextToSpeech.OnInitListener 
         // 语音识别功能已禁用
     }
 
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val result = textToSpeech.setLanguage(Locale.CHINESE)
-
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Toast.makeText(this, "不支持中文TTS", Toast.LENGTH_SHORT).show()
-            } else {
-                isTtsReady = true
-                textToSpeech.setSpeechRate(1.0f)
-                textToSpeech.setPitch(1.0f)
-
-                textToSpeech.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                    override fun onStart(utteranceId: String?) {}
-
-                    override fun onDone(utteranceId: String?) {}
-
-                    override fun onError(utteranceId: String?) {}
-                })
-            }
-        } else {
-            Toast.makeText(this, "TTS初始化失败", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun speakText(text: String) {
-        if (isTtsReady) {
-            if (textToSpeech.isSpeaking) {
-                textToSpeech.stop()
-            }
+        if (!ttsHelper.isReady()) {
+            Log.e("VoiceAssistant", "TTS未就绪")
+            Toast.makeText(this, "TTS未就绪，请检查设备是否支持TTS", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-            textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts_utterance")
+        try {
+            ttsHelper.speak(text)
+        } catch (e: Exception) {
+            Log.e("VoiceAssistant", "TTS播放失败", e)
+            Toast.makeText(this, "TTS播放失败: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onDestroy() {
-        if (::speechRecognizer.isInitialized) {
-            speechRecognizer.destroy()
+        if (::ttsHelper.isInitialized) {
+            ttsHelper.shutdown()
         }
-
-        if (::textToSpeech.isInitialized) {
-            textToSpeech.stop()
-            textToSpeech.shutdown()
-        }
-
         super.onDestroy()
     }
 }
