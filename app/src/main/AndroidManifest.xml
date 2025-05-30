@@ -11,6 +11,10 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- 屏幕录制权限 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- 媒体投影服务权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+<!--    状态栏-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -62,6 +66,13 @@
             android:name=".service.FloatingAssistantService"
             android:enabled="true"
             android:exported="false" />
+            
+        <!-- 截图服务 -->
+        <service
+            android:name=".service.ScreenshotService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
             
         <!-- AI语音助手Activity -->
         <activity
