@@ -35,24 +35,19 @@ class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
 
         try {
             isBinding.set(true)
-            // 检查设备是否支持TTS
-            val checkIntent = Intent()
-            checkIntent.action = TextToSpeech.Engine.ACTION_CHECK_TTS_DATA
-            context.startActivity(checkIntent)
 
-            // 对于小米设备，使用应用上下文
             val contextToUse = if (isXiaomiDevice) {
                 context.applicationContext
             } else {
                 context
             }
 
-            // 确保之前的实例被正确释放
+            // 不要启动 ACTION_CHECK_TTS_DATA 的Activity，直接初始化
             releaseTTS()
 
-            // 创建TTS实例
             tts = TextToSpeech(contextToUse, this)
             Log.d("TTSHelper", "开始初始化TTS，设备类型: ${if (isXiaomiDevice) "小米" else "其他"}")
+
         } catch (e: Exception) {
             Log.e("TTSHelper", "TTS初始化失败", e)
             isBinding.set(false)
@@ -60,21 +55,23 @@ class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
         }
     }
 
+
     private fun releaseTTS() {
         try {
-            tts?.let { ttsInstance ->
+            tts?.let {
                 if (isInitialized.get()) {
-                    ttsInstance.stop()
+                    it.stop()
+                    it.shutdown()
                 }
-                ttsInstance.shutdown()
             }
         } catch (e: Exception) {
-            Log.e("TTSHelper", "释放TTS实例失败", e)
+            Log.e("TTSHelper", "释放TTS失败", e)
         } finally {
             tts = null
             isInitialized.set(false)
         }
     }
+
 
     /**
      * 设置初始化回调
