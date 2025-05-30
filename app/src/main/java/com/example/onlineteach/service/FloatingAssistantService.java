@@ -167,8 +167,10 @@ public class FloatingAssistantService extends Service {
             pageAnalysisItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // AI页面分析功能（暂未实现）
-                    ToastUtils.showToast(getApplicationContext(), "AI页面分析功能即将上线", Toast.LENGTH_SHORT);
+                    // 启动AI页面分析Activity
+                    Intent intent = new Intent(getApplicationContext(), com.example.onlineteach.ScreenshotAnalysisActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     hideMenu();
                 }
             });

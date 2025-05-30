@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.MessageViewHolder> {
+    private OnItemClickListener onItemClickListener;
 
     private List<ChatMessage> messages;
 
@@ -34,6 +35,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         ChatMessage message = messages.get(position);
         holder.messageText.setText(message.getContent());
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(message);
+            }
+        });
 
         // 根据消息类型设置不同的样式
         if (message.isFromUser()) {
@@ -58,6 +64,14 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     public void clearMessages() {
         messages.clear();
         notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(ChatMessage message);
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder {

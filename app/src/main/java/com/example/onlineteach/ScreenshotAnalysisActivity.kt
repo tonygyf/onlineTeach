@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.onlineteach.utils.ScreenshotHelper
@@ -21,6 +22,18 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
 class ScreenshotAnalysisActivity : AppCompatActivity() {
+
+    companion object {
+        /**
+         * 启动截图分析活动
+         * @param context 上下文对象
+         */
+        fun startScreenshotAnalysis(context: Context) {
+            val intent = Intent(context, ScreenshotAnalysisActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+    }
 
     private val REQUEST_SCREENSHOT = 1001
     private lateinit var imageView: ImageView
