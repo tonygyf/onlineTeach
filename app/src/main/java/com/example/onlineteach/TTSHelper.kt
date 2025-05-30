@@ -2,11 +2,12 @@ package com.example.onlineteach
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener // ✅ 正确
-
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * TTS助手类，用于处理文字转语音功能
@@ -15,28 +16,63 @@ import java.util.*
 class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
 
     private var tts: TextToSpeech? = null
-    private var isInitialized = false
+    private var isInitialized = AtomicBoolean(false)
     private var onInitCallback: ((Boolean) -> Unit)? = null
     private var retryCount = 0
     private val MAX_RETRY = 3
+    private val isXiaomiDevice = Build.MANUFACTURER.lowercase().contains("xiaomi")
+    private var isBinding = AtomicBoolean(false)
 
     init {
         initTTS()
     }
 
     private fun initTTS() {
+        if (isBinding.get()) {
+            Log.d("TTSHelper", "TTS正在初始化中，跳过重复初始化")
+            return
+        }
+
         try {
+            isBinding.set(true)
             // 检查设备是否支持TTS
             val checkIntent = Intent()
             checkIntent.action = TextToSpeech.Engine.ACTION_CHECK_TTS_DATA
             context.startActivity(checkIntent)
 
+            // 对于小米设备，使用应用上下文
+            val contextToUse = if (isXiaomiDevice) {
+                context.applicationContext
+            } else {
+                context
+            }
+
+            // 确保之前的实例被正确释放
+            releaseTTS()
+
             // 创建TTS实例
-            tts = TextToSpeech(context.applicationContext, this)
-            Log.d("TTSHelper", "开始初始化TTS")
+            tts = TextToSpeech(contextToUse, this)
+            Log.d("TTSHelper", "开始初始化TTS，设备类型: ${if (isXiaomiDevice) "小米" else "其他"}")
         } catch (e: Exception) {
             Log.e("TTSHelper", "TTS初始化失败", e)
-            onInitCallback?.invoke(false)
+            isBinding.set(false)
+            retryInit()
+        }
+    }
+
+    private fun releaseTTS() {
+        try {
+            tts?.let { ttsInstance ->
+                if (isInitialized.get()) {
+                    ttsInstance.stop()
+                }
+                ttsInstance.shutdown()
+            }
+        } catch (e: Exception) {
+            Log.e("TTSHelper", "释放TTS实例失败", e)
+        } finally {
+            tts = null
+            isInitialized.set(false)
         }
     }
 
@@ -49,69 +85,73 @@ class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
-        when (status) {
-            TextToSpeech.SUCCESS -> {
-                try {
-                    // 获取可用的语言列表
-                    val availableLanguages = tts?.availableLanguages
-                    Log.d("TTSHelper", "可用的TTS语言: $availableLanguages")
+        try {
+            when (status) {
+                TextToSpeech.SUCCESS -> {
+                    try {
+                        // 获取可用的语言列表
+                        val availableLanguages = tts?.availableLanguages
+                        Log.d("TTSHelper", "可用的TTS语言: $availableLanguages")
 
-                    // 获取当前引擎信息
-                    val engineInfo = tts?.engines
-                    Log.d("TTSHelper", "当前TTS引擎: ${engineInfo?.joinToString { it.name }}")
+                        // 获取当前引擎信息
+                        val engineInfo = tts?.engines
+                        Log.d("TTSHelper", "当前TTS引擎: ${engineInfo?.joinToString { it.name }}")
 
-                    // 检查是否支持中文
-                    val result = tts?.setLanguage(Locale.CHINESE)
-                    when (result) {
-                        TextToSpeech.LANG_MISSING_DATA -> {
-                            Log.e("TTSHelper", "TTS语言包缺失")
-                            // 尝试安装语言包
-                            val installIntent = Intent()
-                            installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
-                            context.startActivity(installIntent)
-                            onInitCallback?.invoke(false)
+                        // 检查是否支持中文
+                        val result = tts?.setLanguage(Locale.CHINESE)
+                        when (result) {
+                            TextToSpeech.LANG_MISSING_DATA -> {
+                                Log.e("TTSHelper", "TTS语言包缺失")
+                                // 尝试安装语言包
+                                val installIntent = Intent()
+                                installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
+                                context.startActivity(installIntent)
+                                onInitCallback?.invoke(false)
+                            }
+                            TextToSpeech.LANG_NOT_SUPPORTED -> {
+                                Log.e("TTSHelper", "TTS不支持中文")
+                                onInitCallback?.invoke(false)
+                            }
+                            else -> {
+                                isInitialized.set(true)
+                                tts?.setSpeechRate(1.0f)
+                                tts?.setPitch(1.0f)
+                                
+                                // 设置进度监听器
+                                tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                                    override fun onStart(utteranceId: String?) {
+                                        Log.d("TTSHelper", "开始朗读: $utteranceId")
+                                    }
+
+                                    override fun onDone(utteranceId: String?) {
+                                        Log.d("TTSHelper", "朗读完成: $utteranceId")
+                                    }
+
+                                    override fun onError(utteranceId: String?) {
+                                        Log.e("TTSHelper", "朗读错误: $utteranceId")
+                                    }
+                                })
+
+                                Log.d("TTSHelper", "TTS初始化成功")
+                                onInitCallback?.invoke(true)
+                            }
                         }
-                        TextToSpeech.LANG_NOT_SUPPORTED -> {
-                            Log.e("TTSHelper", "TTS不支持中文")
-                            onInitCallback?.invoke(false)
-                        }
-                        else -> {
-                            isInitialized = true
-                            tts?.setSpeechRate(1.0f)
-                            tts?.setPitch(1.0f)
-                            
-                            // 设置进度监听器
-                            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                                override fun onStart(utteranceId: String?) {
-                                    Log.d("TTSHelper", "开始朗读: $utteranceId")
-                                }
-
-                                override fun onDone(utteranceId: String?) {
-                                    Log.d("TTSHelper", "朗读完成: $utteranceId")
-                                }
-
-                                override fun onError(utteranceId: String?) {
-                                    Log.e("TTSHelper", "朗读错误: $utteranceId")
-                                }
-                            })
-
-                            Log.d("TTSHelper", "TTS初始化成功")
-                            onInitCallback?.invoke(true)
-                        }
+                    } catch (e: Exception) {
+                        Log.e("TTSHelper", "TTS设置语言失败", e)
+                        retryInit()
                     }
-                } catch (e: Exception) {
-                    Log.e("TTSHelper", "TTS设置语言失败", e)
+                }
+                TextToSpeech.ERROR -> {
+                    Log.e("TTSHelper", "TTS初始化错误")
+                    retryInit()
+                }
+                else -> {
+                    Log.e("TTSHelper", "TTS初始化失败，状态码: $status")
                     retryInit()
                 }
             }
-            TextToSpeech.ERROR -> {
-                Log.e("TTSHelper", "TTS初始化错误")
-                retryInit()
-            }
-            else -> {
-                Log.e("TTSHelper", "TTS初始化失败，状态码: $status")
-                retryInit()
-            }
+        } finally {
+            isBinding.set(false)
         }
     }
 
@@ -119,10 +159,10 @@ class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
         if (retryCount < MAX_RETRY) {
             retryCount++
             Log.d("TTSHelper", "尝试重新初始化TTS，第${retryCount}次")
-            // 延迟1秒后重试
+            // 延迟3秒后重试，给系统更多时间
             android.os.Handler(context.mainLooper).postDelayed({
                 initTTS()
-            }, 1000)
+            }, 3000)
         } else {
             Log.e("TTSHelper", "TTS初始化重试次数超过限制")
             onInitCallback?.invoke(false)
@@ -134,7 +174,7 @@ class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
      * @param text 要朗读的文本
      */
     fun speak(text: String) {
-        if (!isInitialized) {
+        if (!isInitialized.get()) {
             Log.e("TTSHelper", "TTS尚未初始化，无法朗读")
             return
         }
@@ -149,7 +189,7 @@ class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
      * 停止朗读
      */
     fun stop() {
-        if (isInitialized) {
+        if (isInitialized.get()) {
             try {
                 tts?.stop()
             } catch (e: Exception) {
@@ -162,20 +202,12 @@ class TTSHelper(private val context: Context) : TextToSpeech.OnInitListener {
      * 关闭TTS引擎
      */
     fun shutdown() {
-        if (isInitialized) {
-            try {
-                tts?.stop()
-                tts?.shutdown()
-                isInitialized = false
-            } catch (e: Exception) {
-                Log.e("TTSHelper", "TTS关闭失败", e)
-            }
-        }
+        releaseTTS()
     }
 
     /**
      * 检查TTS是否已初始化
      * @return 是否已初始化
      */
-    fun isReady(): Boolean = isInitialized
+    fun isReady(): Boolean = isInitialized.get()
 } 
