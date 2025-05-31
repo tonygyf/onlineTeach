@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_navigation_dashboard_to_course_detail"
             app:destination="@id/navigation_course_detail" />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_navigation_course_list"
+            app:destination="@id/navigation_course_list" />
     </fragment>
 
     <fragment

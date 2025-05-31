@@ -61,7 +61,10 @@ public class CourseListFragment extends Fragment {
             // 设置当前选中的课程
             mViewModel.selectCourse(course);
             // 跳转到课程详情页面
-            Navigation.findNavController(view).navigate(R.id.action_navigation_course_list_to_course_detail);
+            Bundle args = new Bundle();
+            args.putInt("courseId", course.getCourseId());
+            Navigation.findNavController(view)
+                    .navigate(R.id.action_navigation_course_list_to_course_detail, args);
         });
 
         // 观察课程列表数据变化
