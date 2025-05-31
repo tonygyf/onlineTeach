@@ -10,12 +10,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineteach.R;
 import com.example.onlineteach.databinding.FragmentDashboardBinding;
 
-public class DashboardFragment extends Fragment {
+public class DashboardFragment extends Fragment implements EnrolledCoursesAdapter.OnCourseClickListener {
 
     private FragmentDashboardBinding binding;
     private DashboardViewModel dashboardViewModel;
@@ -37,7 +38,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        enrolledCoursesAdapter = new EnrolledCoursesAdapter();
+        enrolledCoursesAdapter = new EnrolledCoursesAdapter(this);
         binding.recyclerViewEnrolledCourses.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerViewEnrolledCourses.setAdapter(enrolledCoursesAdapter);
     }
@@ -48,6 +49,14 @@ public class DashboardFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onCourseClick(int courseId) {
+        // 导航到课程详情页面
+        Bundle args = new Bundle();
+        args.putInt("courseId", courseId);
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_navigation_dashboard_to_course_detail, args);
+    }
 
     private void setupCalendarView() {
         binding.calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {

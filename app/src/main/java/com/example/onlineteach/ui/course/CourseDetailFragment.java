@@ -12,18 +12,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.onlineteach.R;
 import com.example.onlineteach.data.database.AppDatabase;
 import com.example.onlineteach.data.model.Course;
 import com.example.onlineteach.data.repository.EnrollmentRepository;
 import com.example.onlineteach.utils.ToastUtils;
+import com.example.onlineteach.databinding.FragmentCourseDetailBinding;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CourseDetailFragment extends Fragment {
 
-    private CourseListViewModel viewModel;
+    private FragmentCourseDetailBinding binding;
+    private CourseDetailViewModel viewModel;
     private ImageView courseImage;
     private TextView courseTitle;
     private TextView courseTeacher;
@@ -35,30 +38,34 @@ public class CourseDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_course_detail, container, false);
-        
+        binding = FragmentCourseDetailBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(this).get(CourseDetailViewModel.class);
+
+        // 获取传递的课程ID
+        int courseId = getArguments() != null ? getArguments().getInt("courseId", -1) : -1;
+        if (courseId != -1) {
+            viewModel.loadCourse(courseId);
+            observeCourse();
+        }
+
         // 初始化视图
-        courseImage = root.findViewById(R.id.image_course_detail);
-        courseTitle = root.findViewById(R.id.text_course_title_detail);
-        courseTeacher = root.findViewById(R.id.text_course_teacher_detail);
-        courseCredits = root.findViewById(R.id.text_course_credits_detail);
-        courseDescription = root.findViewById(R.id.text_course_description);
-        enrollButton = root.findViewById(R.id.button_enroll_detail);
+        courseImage = binding.imageCourseDetail;
+        courseTitle = binding.textCourseTitleDetail;
+        courseTeacher = binding.textCourseTeacherDetail;
+        courseCredits = binding.textCourseCreditsDetail;
+        courseDescription = binding.textCourseDescription;
+        enrollButton = binding.buttonEnrollDetail;
         
-        return root;
+        return binding.getRoot();
+    }
+
+    private void observeCourse() {
+        viewModel.getCourse().observe(getViewLifecycleOwner(), this::updateUI);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
-        // 获取ViewModel
-        viewModel = new ViewModelProvider(requireActivity(), 
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().getApplication()))
-            .get(CourseListViewModel.class);
-        
-        // 观察选中的课程
-        viewModel.getSelectedCourse().observe(getViewLifecycleOwner(), this::updateUI);
         
         // 设置报名按钮点击事件
         // 初始化报名仓库
@@ -66,7 +73,7 @@ public class CourseDetailFragment extends Fragment {
 
         // 设置报名按钮点击事件
         enrollButton.setOnClickListener(v -> {
-            Course course = viewModel.getSelectedCourse().getValue();
+            Course course = viewModel.getCourse().getValue();
             if (course != null) {
                 // 使用AtomicBoolean来在异步操作中存储结果
                 AtomicBoolean isAlreadyEnrolled = new AtomicBoolean(false);
@@ -120,5 +127,11 @@ public class CourseDetailFragment extends Fragment {
                 courseImage.setImageResource(resourceId);
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

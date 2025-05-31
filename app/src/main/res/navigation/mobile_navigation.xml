@@ -35,7 +35,11 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.onlineteach.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_navigation_dashboard_to_course_detail"
+            app:destination="@id/navigation_course_detail" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications"
@@ -72,7 +76,12 @@
         android:id="@+id/navigation_course_detail"
         android:name="com.example.onlineteach.ui.course.CourseDetailFragment"
         android:label="课程详情"
-        tools:layout="@layout/fragment_course_detail" />
+        tools:layout="@layout/fragment_course_detail">
+        <argument
+            android:name="courseId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
         
     <fragment
         android:id="@+id/navigation_bookshelf"

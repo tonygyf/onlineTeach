@@ -19,8 +19,14 @@ import java.util.Locale;
 public class EnrolledCoursesAdapter extends RecyclerView.Adapter<EnrolledCoursesAdapter.ViewHolder> {
     private List<Enrollment> enrollments;
     private final SimpleDateFormat dateFormat;
+    private OnCourseClickListener listener;
 
-    public EnrolledCoursesAdapter() {
+    public interface OnCourseClickListener {
+        void onCourseClick(int courseId);
+    }
+
+    public EnrolledCoursesAdapter(OnCourseClickListener listener) {
+        this.listener = listener;
         dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     }
 
@@ -43,6 +49,12 @@ public class EnrolledCoursesAdapter extends RecyclerView.Adapter<EnrolledCourses
         holder.binding.textViewCourseName.setText("课程ID: " + enrollment.getCourseId());
         holder.binding.textViewEnrollmentDate.setText("选课时间: " + 
                 dateFormat.format(new Date(enrollment.getEnrollmentDate())));
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onCourseClick(enrollment.getCourseId());
+            }
+        });
     }
 
     @Override
