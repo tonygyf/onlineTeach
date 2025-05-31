@@ -59,6 +59,10 @@ dependencies {
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     implementation ("androidx.concurrent:concurrent-futures:1.1.0")
     implementation ("com.google.guava:guava:33.3.1-android") // 或更新的版本
+    // WebSocket客户端
+    implementation ("org.java-websocket:Java-WebSocket:1.5.3")
+    // JSON处理
+    implementation ("com.google.code.gson:gson:2.10.1")
 }
 
 // 更新 JVM 工具链为 Java 17

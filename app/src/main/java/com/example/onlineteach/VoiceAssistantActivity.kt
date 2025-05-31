@@ -39,6 +39,7 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.Locale
 import java.util.Properties
+import android.util.Base64 as AndroidBase64
 
 class VoiceAssistantActivity : AppCompatActivity() {
 
@@ -73,17 +74,23 @@ class VoiceAssistantActivity : AppCompatActivity() {
     }
 
     private fun initTTS() {
-        ttsHelper = TTSHelper(this)
+        Log.d("VoiceAssistant", "开始初始化语音合成服务")
+        val appId = "008999e5"
+        val apiKey = "07e74836b6d4b904f5698c85a4099718"
+        val apiSecret = "ZDcxYjc3NWU2YjYwMWE1NWU0ZWUxZWZh"
+        Log.d("VoiceAssistant", "API配置: appId=$appId, apiKey=$apiKey, apiSecret=$apiSecret")
+        
+        ttsHelper = TTSHelper(this, appId, apiKey, apiSecret)
         ttsHelper.setOnInitCallback { success ->
             if (success) {
-                Log.d("VoiceAssistant", "TTS初始化成功")
-                // 测试TTS
-                ttsHelper.speak("TTS测试")
+                Log.d("VoiceAssistant", "语音合成服务初始化成功")
             } else {
-                Log.e("VoiceAssistant", "TTS初始化失败")
-                Toast.makeText(this, "TTS初始化失败，请检查系统TTS设置", Toast.LENGTH_LONG).show()
+                Log.e("VoiceAssistant", "语音合成服务初始化失败")
+                Toast.makeText(this, "语音合成服务连接失败，请检查网络连接", Toast.LENGTH_LONG).show()
             }
         }
+        Log.d("VoiceAssistant", "开始连接语音合成服务")
+        ttsHelper.init()
     }
 
     private fun initViews() {
@@ -244,16 +251,18 @@ class VoiceAssistantActivity : AppCompatActivity() {
 
     private fun speakText(text: String) {
         if (!ttsHelper.isReady()) {
-            Log.e("VoiceAssistant", "TTS未就绪")
-            Toast.makeText(this, "TTS未就绪，请检查设备是否支持TTS", Toast.LENGTH_SHORT).show()
+            Log.e("VoiceAssistant", "语音合成服务未连接，尝试重新连接")
+            ttsHelper.init()
+            Toast.makeText(this, "正在重新连接语音合成服务...", Toast.LENGTH_SHORT).show()
             return
         }
 
         try {
+            Log.d("VoiceAssistant", "开始语音合成: $text")
             ttsHelper.speak(text)
         } catch (e: Exception) {
-            Log.e("VoiceAssistant", "TTS播放失败", e)
-            Toast.makeText(this, "TTS播放失败: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("VoiceAssistant", "语音合成失败", e)
+            Toast.makeText(this, "语音合成失败: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
