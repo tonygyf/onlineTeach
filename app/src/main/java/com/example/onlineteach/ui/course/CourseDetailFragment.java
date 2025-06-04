@@ -18,6 +18,7 @@ import com.example.onlineteach.R;
 import com.example.onlineteach.data.database.AppDatabase;
 import com.example.onlineteach.data.model.Course;
 import com.example.onlineteach.data.repository.EnrollmentRepository;
+import com.example.onlineteach.data.repository.UserRepository;
 import com.example.onlineteach.utils.ToastUtils;
 import com.example.onlineteach.databinding.FragmentCourseDetailBinding;
 
@@ -34,6 +35,7 @@ public class CourseDetailFragment extends Fragment {
     private TextView courseDescription;
     private Button enrollButton;
     private EnrollmentRepository enrollmentRepository;
+    private UserRepository userRepository;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -67,9 +69,9 @@ public class CourseDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        // 设置报名按钮点击事件
-        // 初始化报名仓库
+        // 初始化仓库
         enrollmentRepository = new EnrollmentRepository(requireContext());
+        userRepository = new UserRepository(requireContext());
 
         // 设置报名按钮点击事件
         enrollButton.setOnClickListener(v -> {
@@ -80,8 +82,15 @@ public class CourseDetailFragment extends Fragment {
                 
                 // 在后台线程中检查是否已报名
                 AppDatabase.databaseWriteExecutor.execute(() -> {
-                    // 假设当前用户ID为1，实际应从用户会话获取
-                    int currentUserId = 1;
+                    // 获取当前登录用户ID
+                    int currentUserId = userRepository.getLoggedInUserId();
+                    if (currentUserId == -1) {
+                        requireActivity().runOnUiThread(() -> {
+                            ToastUtils.showShortToast(requireContext(), "请先登录");
+                        });
+                        return;
+                    }
+                    
                     isAlreadyEnrolled.set(enrollmentRepository.isEnrolled(currentUserId, course.getCourseId()));
                     
                     // 在主线程中处理结果

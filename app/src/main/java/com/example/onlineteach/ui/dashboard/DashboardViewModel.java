@@ -7,18 +7,22 @@ import androidx.lifecycle.LiveData;
 
 import com.example.onlineteach.data.model.Enrollment;
 import com.example.onlineteach.data.repository.EnrollmentRepository;
+import com.example.onlineteach.data.repository.UserRepository;
 
 import java.util.List;
 
 public class DashboardViewModel extends AndroidViewModel {
     private EnrollmentRepository enrollmentRepository;
+    private UserRepository userRepository;
     private LiveData<List<Enrollment>> enrolledCourses;
 
     public DashboardViewModel(Application application) {
         super(application);
         enrollmentRepository = new EnrollmentRepository(application);
-        // 假设当前用户ID为1，实际应从用户会话获取
-        enrolledCourses = enrollmentRepository.getEnrollmentsByUserId(1);
+        userRepository = new UserRepository(application);
+        // 使用当前登录用户ID
+        int currentUserId = userRepository.getLoggedInUserId();
+        enrolledCourses = enrollmentRepository.getEnrollmentsByUserId(currentUserId);
     }
 
     public LiveData<List<Enrollment>> getEnrolledCourses() {
