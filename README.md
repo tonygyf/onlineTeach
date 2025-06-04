@@ -106,7 +106,7 @@ OnlineTeach/
 
 ## 👨‍💻 作者
 
-- **gyf** - *Initial work* - [Your GitHub](https://github.com/tonygyf)
+- **gyf** - *Initial work* - [my GitHub](https://github.com/tonygyf)
 
 ## 🙏 致谢
 
